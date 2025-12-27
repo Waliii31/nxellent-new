@@ -1,0 +1,2987 @@
+Authentication
+User authentication and authorization
+
+
+
+POST
+/auth/register
+Register a new user
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "role": "founder",
+  "profile": {
+    "name": "John Doe",
+    "company": "Acme Corp"
+  }
+}
+Responses
+Code	Description	Links
+201	
+User successfully registered
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "email": "user@example.com",
+    "role": "founder",
+    "profile": {
+      "name": "John Doe",
+      "company": "Acme Corp",
+      "avatar": "https://example.com/avatar.jpg"
+    },
+    "oauth": {
+      "github": {
+        "id": "12345678",
+        "username": "octocat"
+      }
+    }
+  }
+}
+No links
+409	
+User with this email already exists
+
+No links
+
+POST
+/auth/login
+Login user
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+Responses
+Code	Description	Links
+200	
+User successfully logged in
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "507f1f77bcf86cd799439011",
+    "email": "user@example.com",
+    "role": "founder",
+    "profile": {
+      "name": "John Doe",
+      "company": "Acme Corp",
+      "avatar": "https://example.com/avatar.jpg"
+    },
+    "oauth": {
+      "github": {
+        "id": "12345678",
+        "username": "octocat"
+      }
+    }
+  }
+}
+No links
+401	
+Invalid credentials
+
+No links
+
+GET
+/auth/github
+Initiate GitHub OAuth flow
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+302	
+Redirects to GitHub OAuth
+
+No links
+
+GET
+/auth/github/callback
+GitHub OAuth callback
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+302	
+Redirects to frontend with token
+
+No links
+
+GET
+/auth/github/status
+Check GitHub connection status
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+GitHub connection status retrieved
+
+No links
+
+GET
+/auth/github/connect
+Initiate GitHub connection to existing user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+302	
+Redirects to GitHub OAuth for account linking
+
+No links
+
+POST
+/auth/disconnect-github
+Disconnect GitHub account from user profile
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+GitHub account disconnected successfully
+
+No links
+
+GET
+/auth/github/repos
+Get GitHub repositories for connected user
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+GitHub repositories retrieved
+
+No links
+401	
+GitHub not connected or unauthorized
+
+No links
+Users
+User management and profiles
+
+
+
+GET
+/users/profile
+Get current user profile with full details
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+User profile retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "id": "507f1f77bcf86cd799439011",
+  "email": "user@example.com",
+  "role": "founder",
+  "profile": {
+    "name": "John Doe",
+    "company": "Acme Corp",
+    "avatar": "https://example.com/avatar.jpg"
+  },
+  "oauth": {
+    "github": {
+      "id": "12345678",
+      "username": "octocat"
+    }
+  }
+}
+No links
+401	
+Unauthorized
+
+No links
+404	
+User not found
+
+No links
+
+GET
+/users/account-info
+Get account info (password status, OAuth providers)
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Account info retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "hasPassword": true,
+  "canChangeEmail": true,
+  "canChangePassword": true,
+  "oauthProviders": [
+    "string"
+  ]
+}
+No links
+
+PUT
+/users/email
+Update email address
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "newEmail": "string",
+  "currentPassword": "string"
+}
+Responses
+Code	Description	Links
+200	
+Email updated successfully
+
+No links
+400	
+Invalid current password or email already in use
+
+No links
+403	
+OAuth-only users cannot change email
+
+No links
+
+PUT
+/users/password
+Update password
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "currentPassword": "string",
+  "newPassword": "string",
+  "confirmPassword": "string"
+}
+Responses
+Code	Description	Links
+200	
+Password updated successfully
+
+No links
+400	
+Invalid current password or passwords do not match
+
+No links
+403	
+OAuth-only users cannot change password
+
+No links
+
+DELETE
+/users/account
+Delete user account
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "password": "string",
+  "confirmation": "string"
+}
+Responses
+Code	Description	Links
+200	
+Account deleted successfully
+
+No links
+400	
+Invalid confirmation or password
+
+No links
+Health
+Application health checks
+
+
+
+GET
+/
+Get welcome message
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Welcome message
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+"Hello World!"
+No links
+
+GET
+/health
+Get application health status
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Application health information
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "status": "ok",
+  "timestamp": "2025-10-01T18:44:29.719Z",
+  "database": "connected",
+  "uptime": 64.770296848,
+  "environment": "development"
+}
+No links
+Billing
+Stripe billing and subscriptions
+
+
+
+GET
+/billing/status
+Get user billing status and scan limits
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Billing information retrieved successfully
+
+No links
+
+POST
+/billing/check-scan-eligibility
+Check if user can perform a scan
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Scan eligibility checked
+
+No links
+
+POST
+/billing/create-subscription-checkout
+Create Stripe checkout session for subscription plans
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Checkout session created successfully
+
+No links
+
+POST
+/billing/create-pay-per-scan-checkout
+Create Stripe checkout session for pay-per-scan
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Checkout session created successfully
+
+No links
+
+GET
+/billing/test-stripe
+Test Stripe configuration
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+No links
+
+GET
+/billing/diagnose
+Diagnose billing configuration
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+No links
+
+GET
+/billing/subscription/{userId}
+Get subscription details for a user
+
+Parameters
+Try it out
+Name	Description
+userId *
+string
+(path)
+userId
+Responses
+Code	Description	Links
+200	
+No links
+
+POST
+/billing/test-payment/{type}
+Test payment handling manually
+
+
+Parameters
+Try it out
+Name	Description
+type *
+string
+(path)
+type
+Responses
+Code	Description	Links
+201	
+No links
+Webhooks
+Stripe webhook handling
+
+
+
+POST
+/webhooks/stripe
+Handle Stripe webhook events
+
+Parameters
+Try it out
+Name	Description
+stripe-signature *
+string
+(header)
+stripe-signature
+Responses
+Code	Description	Links
+200	
+Webhook processed successfully
+
+No links
+Projects
+Project management and CRUD operations
+
+
+
+GET
+/projects/leaderboard
+Get public project leaderboard
+
+Parameters
+Try it out
+Name	Description
+tab
+string
+(query)
+Leaderboard tab
+
+Available values : overall, contracts, applications
+
+
+--
+period
+string
+(query)
+Time period filter
+
+Available values : 1d, 7d, 1m, all
+
+
+--
+search
+string
+(query)
+Search by project name
+
+search
+limit
+number
+(query)
+Max results (default 50)
+
+limit
+Responses
+Code	Description	Links
+200	
+Leaderboard retrieved successfully
+
+No links
+
+POST
+/projects
+Create a new project
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string",
+  "visibility": "private"
+}
+Responses
+Code	Description	Links
+201	
+Project created successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.393Z",
+      "joinedAt": "2025-12-18T16:42:17.393Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.393Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.393Z",
+  "updatedAt": "2025-12-18T16:42:17.393Z"
+}
+No links
+400	
+Bad request
+
+No links
+
+GET
+/projects
+Get all projects for the current user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Projects retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "owner": "string",
+    "teamMembers": [
+      {
+        "user": "string",
+        "role": "owner",
+        "invitedAt": "2025-12-18T16:42:17.396Z",
+        "joinedAt": "2025-12-18T16:42:17.396Z"
+      }
+    ],
+    "visibility": "public",
+    "scoringDetails": {
+      "overall": 0,
+      "shieldRank": "gold",
+      "coverage": 0,
+      "coveragePenaltyApplied": true,
+      "contractTrack": {},
+      "applicationTrack": {},
+      "redFlags": [
+        "string"
+      ],
+      "calculatedAt": "2025-12-18T16:42:17.396Z",
+      "latestContractScanId": "string",
+      "latestApplicationScanId": "string",
+      "version": "string"
+    },
+    "isActive": true,
+    "createdAt": "2025-12-18T16:42:17.396Z",
+    "updatedAt": "2025-12-18T16:42:17.396Z"
+  }
+]
+No links
+
+GET
+/projects/public
+Get all public projects (for leaderboard)
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Public projects retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "owner": "string",
+    "teamMembers": [
+      {
+        "user": "string",
+        "role": "owner",
+        "invitedAt": "2025-12-18T16:42:17.401Z",
+        "joinedAt": "2025-12-18T16:42:17.401Z"
+      }
+    ],
+    "visibility": "public",
+    "scoringDetails": {
+      "overall": 0,
+      "shieldRank": "gold",
+      "coverage": 0,
+      "coveragePenaltyApplied": true,
+      "contractTrack": {},
+      "applicationTrack": {},
+      "redFlags": [
+        "string"
+      ],
+      "calculatedAt": "2025-12-18T16:42:17.401Z",
+      "latestContractScanId": "string",
+      "latestApplicationScanId": "string",
+      "version": "string"
+    },
+    "isActive": true,
+    "createdAt": "2025-12-18T16:42:17.401Z",
+    "updatedAt": "2025-12-18T16:42:17.401Z"
+  }
+]
+No links
+
+GET
+/projects/public/{id}
+Get a public project by ID
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Public project retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.405Z",
+      "joinedAt": "2025-12-18T16:42:17.405Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.405Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.405Z",
+  "updatedAt": "2025-12-18T16:42:17.405Z"
+}
+No links
+404	
+Project not found or not public
+
+No links
+
+GET
+/projects/my-projects
+Get projects owned by the current user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+User projects retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "name": "string",
+    "description": "string",
+    "owner": "string",
+    "teamMembers": [
+      {
+        "user": "string",
+        "role": "owner",
+        "invitedAt": "2025-12-18T16:42:17.408Z",
+        "joinedAt": "2025-12-18T16:42:17.408Z"
+      }
+    ],
+    "visibility": "public",
+    "scoringDetails": {
+      "overall": 0,
+      "shieldRank": "gold",
+      "coverage": 0,
+      "coveragePenaltyApplied": true,
+      "contractTrack": {},
+      "applicationTrack": {},
+      "redFlags": [
+        "string"
+      ],
+      "calculatedAt": "2025-12-18T16:42:17.408Z",
+      "latestContractScanId": "string",
+      "latestApplicationScanId": "string",
+      "version": "string"
+    },
+    "isActive": true,
+    "createdAt": "2025-12-18T16:42:17.408Z",
+    "updatedAt": "2025-12-18T16:42:17.408Z"
+  }
+]
+No links
+
+GET
+/projects/portfolio-stats
+Get portfolio statistics for investor dashboard
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Portfolio statistics retrieved successfully
+
+No links
+
+GET
+/projects/{id}
+Get a project by ID
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Project retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.412Z",
+      "joinedAt": "2025-12-18T16:42:17.412Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.412Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.412Z",
+  "updatedAt": "2025-12-18T16:42:17.412Z"
+}
+No links
+404	
+Project not found
+
+No links
+
+PATCH
+/projects/{id}
+Update a project
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "name": "string",
+  "description": "string",
+  "visibility": "private"
+}
+Responses
+Code	Description	Links
+200	
+Project updated successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.418Z",
+      "joinedAt": "2025-12-18T16:42:17.418Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.418Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.418Z",
+  "updatedAt": "2025-12-18T16:42:17.418Z"
+}
+No links
+403	
+Insufficient permissions
+
+No links
+404	
+Project not found
+
+No links
+
+DELETE
+/projects/{id}
+Delete a project
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Project deleted successfully
+
+No links
+403	
+Only project owner can delete
+
+No links
+404	
+Project not found
+
+No links
+
+POST
+/projects/{id}/team
+Add a team member to the project
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Team member added successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.428Z",
+      "joinedAt": "2025-12-18T16:42:17.428Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.428Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.428Z",
+  "updatedAt": "2025-12-18T16:42:17.428Z"
+}
+No links
+403	
+Insufficient permissions
+
+No links
+
+POST
+/projects/{id}/team/invite
+Invite a team member by email
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Team member invited successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.434Z",
+      "joinedAt": "2025-12-18T16:42:17.434Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.434Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.434Z",
+  "updatedAt": "2025-12-18T16:42:17.434Z"
+}
+No links
+
+DELETE
+/projects/{id}/team/{userId}
+Remove a team member from the project
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+userId *
+string
+(path)
+userId
+Responses
+Code	Description	Links
+200	
+Team member removed successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.438Z",
+      "joinedAt": "2025-12-18T16:42:17.438Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.438Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.438Z",
+  "updatedAt": "2025-12-18T16:42:17.438Z"
+}
+No links
+403	
+Insufficient permissions
+
+No links
+
+PATCH
+/projects/{id}/team/{userId}/role
+Update a team member role
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+userId *
+string
+(path)
+userId
+Responses
+Code	Description	Links
+200	
+Team member role updated successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "name": "string",
+  "description": "string",
+  "owner": "string",
+  "teamMembers": [
+    {
+      "user": "string",
+      "role": "owner",
+      "invitedAt": "2025-12-18T16:42:17.442Z",
+      "joinedAt": "2025-12-18T16:42:17.442Z"
+    }
+  ],
+  "visibility": "public",
+  "scoringDetails": {
+    "overall": 0,
+    "shieldRank": "gold",
+    "coverage": 0,
+    "coveragePenaltyApplied": true,
+    "contractTrack": {},
+    "applicationTrack": {},
+    "redFlags": [
+      "string"
+    ],
+    "calculatedAt": "2025-12-18T16:42:17.442Z",
+    "latestContractScanId": "string",
+    "latestApplicationScanId": "string",
+    "version": "string"
+  },
+  "isActive": true,
+  "createdAt": "2025-12-18T16:42:17.442Z",
+  "updatedAt": "2025-12-18T16:42:17.442Z"
+}
+No links
+403	
+Only project owner can update roles
+
+No links
+Contract Scans
+Smart contract security scanning
+
+
+
+POST
+/contract-scans
+Start a new contract scan
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "projectId": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "blockchain": "solana",
+  "framework": "string"
+}
+Responses
+Code	Description	Links
+201	
+Contract scan started successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "ownership": 0,
+    "cpiFunds": 0,
+    "vulnerabilities": 0,
+    "hygiene": 0,
+    "deployHistory": 0,
+    "splToken": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.446Z",
+    "completedAt": "2025-12-18T16:42:17.446Z",
+    "errorMessage": "string"
+  },
+  "blockchain": "string",
+  "framework": "string",
+  "createdAt": "2025-12-18T16:42:17.446Z",
+  "updatedAt": "2025-12-18T16:42:17.446Z"
+}
+No links
+404	
+Project not found
+
+No links
+
+GET
+/contract-scans
+Get all contract scans for the current user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Contract scans retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "project": "string",
+    "scannedBy": "string",
+    "commitHash": "string",
+    "repositoryUrl": "string",
+    "branch": "string",
+    "scores": {
+      "overall": 0,
+      "ownership": 0,
+      "cpiFunds": 0,
+      "vulnerabilities": 0,
+      "hygiene": 0,
+      "deployHistory": 0,
+      "splToken": 0
+    },
+    "issueCounts": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "coverage": 0,
+    "findings": [
+      {
+        "id": "string",
+        "title": "string",
+        "description": "string",
+        "severity": "critical",
+        "category": "string",
+        "evidence": "string",
+        "recommendation": "string",
+        "status": "open",
+        "pointsDeducted": 0
+      }
+    ],
+    "scanStatus": {
+      "status": "pending",
+      "startedAt": "2025-12-18T16:42:17.451Z",
+      "completedAt": "2025-12-18T16:42:17.451Z",
+      "errorMessage": "string"
+    },
+    "blockchain": "string",
+    "framework": "string",
+    "createdAt": "2025-12-18T16:42:17.451Z",
+    "updatedAt": "2025-12-18T16:42:17.451Z"
+  }
+]
+No links
+
+GET
+/contract-scans/statistics
+Get contract scan statistics for the current user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Statistics retrieved successfully
+
+No links
+
+GET
+/contract-scans/project/{projectId}
+Get all contract scans for a specific project
+
+Parameters
+Try it out
+Name	Description
+projectId *
+string
+(path)
+projectId
+Responses
+Code	Description	Links
+200	
+Contract scans retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "project": "string",
+    "scannedBy": "string",
+    "commitHash": "string",
+    "repositoryUrl": "string",
+    "branch": "string",
+    "scores": {
+      "overall": 0,
+      "ownership": 0,
+      "cpiFunds": 0,
+      "vulnerabilities": 0,
+      "hygiene": 0,
+      "deployHistory": 0,
+      "splToken": 0
+    },
+    "issueCounts": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "coverage": 0,
+    "findings": [
+      {
+        "id": "string",
+        "title": "string",
+        "description": "string",
+        "severity": "critical",
+        "category": "string",
+        "evidence": "string",
+        "recommendation": "string",
+        "status": "open",
+        "pointsDeducted": 0
+      }
+    ],
+    "scanStatus": {
+      "status": "pending",
+      "startedAt": "2025-12-18T16:42:17.456Z",
+      "completedAt": "2025-12-18T16:42:17.456Z",
+      "errorMessage": "string"
+    },
+    "blockchain": "string",
+    "framework": "string",
+    "createdAt": "2025-12-18T16:42:17.456Z",
+    "updatedAt": "2025-12-18T16:42:17.456Z"
+  }
+]
+No links
+404	
+Project not found
+
+No links
+
+GET
+/contract-scans/project/{projectId}/latest
+Get the latest contract scan for a specific project
+
+Parameters
+Try it out
+Name	Description
+projectId *
+string
+(path)
+projectId
+Responses
+Code	Description	Links
+200	
+Latest contract scan retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "ownership": 0,
+    "cpiFunds": 0,
+    "vulnerabilities": 0,
+    "hygiene": 0,
+    "deployHistory": 0,
+    "splToken": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.460Z",
+    "completedAt": "2025-12-18T16:42:17.460Z",
+    "errorMessage": "string"
+  },
+  "blockchain": "string",
+  "framework": "string",
+  "createdAt": "2025-12-18T16:42:17.460Z",
+  "updatedAt": "2025-12-18T16:42:17.460Z"
+}
+No links
+404	
+Project not found
+
+No links
+
+GET
+/contract-scans/{id}
+Get a contract scan by ID
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Contract scan retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "ownership": 0,
+    "cpiFunds": 0,
+    "vulnerabilities": 0,
+    "hygiene": 0,
+    "deployHistory": 0,
+    "splToken": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.467Z",
+    "completedAt": "2025-12-18T16:42:17.467Z",
+    "errorMessage": "string"
+  },
+  "blockchain": "string",
+  "framework": "string",
+  "createdAt": "2025-12-18T16:42:17.467Z",
+  "updatedAt": "2025-12-18T16:42:17.467Z"
+}
+No links
+404	
+Contract scan not found
+
+No links
+
+PATCH
+/contract-scans/{id}/status
+Update contract scan status (internal use)
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Scan status updated successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "ownership": 0,
+    "cpiFunds": 0,
+    "vulnerabilities": 0,
+    "hygiene": 0,
+    "deployHistory": 0,
+    "splToken": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.471Z",
+    "completedAt": "2025-12-18T16:42:17.471Z",
+    "errorMessage": "string"
+  },
+  "blockchain": "string",
+  "framework": "string",
+  "createdAt": "2025-12-18T16:42:17.471Z",
+  "updatedAt": "2025-12-18T16:42:17.471Z"
+}
+No links
+
+PATCH
+/contract-scans/{id}/results
+Update contract scan results (internal use)
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Scan results updated successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "ownership": 0,
+    "cpiFunds": 0,
+    "vulnerabilities": 0,
+    "hygiene": 0,
+    "deployHistory": 0,
+    "splToken": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.475Z",
+    "completedAt": "2025-12-18T16:42:17.475Z",
+    "errorMessage": "string"
+  },
+  "blockchain": "string",
+  "framework": "string",
+  "createdAt": "2025-12-18T16:42:17.475Z",
+  "updatedAt": "2025-12-18T16:42:17.475Z"
+}
+No links
+Application Scans
+Application security scanning
+
+
+
+POST
+/application-scans
+Start a new application scan
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{
+  "projectId": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "framework": "nodejs",
+  "language": "string"
+}
+Responses
+Code	Description	Links
+201	
+Application scan started successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "auth": 0,
+    "secrets": 0,
+    "dependencies": 0,
+    "dataStorage": 0,
+    "apiSurface": 0,
+    "webHygiene": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.480Z",
+    "completedAt": "2025-12-18T16:42:17.480Z",
+    "errorMessage": "string"
+  },
+  "framework": "string",
+  "language": "string",
+  "createdAt": "2025-12-18T16:42:17.480Z",
+  "updatedAt": "2025-12-18T16:42:17.480Z"
+}
+No links
+404	
+Project not found
+
+No links
+
+GET
+/application-scans
+Get all application scans for the current user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Application scans retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "project": "string",
+    "scannedBy": "string",
+    "commitHash": "string",
+    "repositoryUrl": "string",
+    "branch": "string",
+    "scores": {
+      "overall": 0,
+      "auth": 0,
+      "secrets": 0,
+      "dependencies": 0,
+      "dataStorage": 0,
+      "apiSurface": 0,
+      "webHygiene": 0
+    },
+    "issueCounts": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "coverage": 0,
+    "findings": [
+      {
+        "id": "string",
+        "title": "string",
+        "description": "string",
+        "severity": "critical",
+        "category": "string",
+        "evidence": "string",
+        "recommendation": "string",
+        "status": "open",
+        "pointsDeducted": 0
+      }
+    ],
+    "scanStatus": {
+      "status": "pending",
+      "startedAt": "2025-12-18T16:42:17.486Z",
+      "completedAt": "2025-12-18T16:42:17.486Z",
+      "errorMessage": "string"
+    },
+    "framework": "string",
+    "language": "string",
+    "createdAt": "2025-12-18T16:42:17.486Z",
+    "updatedAt": "2025-12-18T16:42:17.486Z"
+  }
+]
+No links
+
+GET
+/application-scans/statistics
+Get application scan statistics for the current user
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Statistics retrieved successfully
+
+No links
+
+GET
+/application-scans/project/{projectId}
+Get all application scans for a specific project
+
+Parameters
+Try it out
+Name	Description
+projectId *
+string
+(path)
+projectId
+Responses
+Code	Description	Links
+200	
+Application scans retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+[
+  {
+    "_id": "string",
+    "project": "string",
+    "scannedBy": "string",
+    "commitHash": "string",
+    "repositoryUrl": "string",
+    "branch": "string",
+    "scores": {
+      "overall": 0,
+      "auth": 0,
+      "secrets": 0,
+      "dependencies": 0,
+      "dataStorage": 0,
+      "apiSurface": 0,
+      "webHygiene": 0
+    },
+    "issueCounts": {
+      "total": 0,
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0
+    },
+    "coverage": 0,
+    "findings": [
+      {
+        "id": "string",
+        "title": "string",
+        "description": "string",
+        "severity": "critical",
+        "category": "string",
+        "evidence": "string",
+        "recommendation": "string",
+        "status": "open",
+        "pointsDeducted": 0
+      }
+    ],
+    "scanStatus": {
+      "status": "pending",
+      "startedAt": "2025-12-18T16:42:17.491Z",
+      "completedAt": "2025-12-18T16:42:17.491Z",
+      "errorMessage": "string"
+    },
+    "framework": "string",
+    "language": "string",
+    "createdAt": "2025-12-18T16:42:17.491Z",
+    "updatedAt": "2025-12-18T16:42:17.491Z"
+  }
+]
+No links
+404	
+Project not found
+
+No links
+
+GET
+/application-scans/project/{projectId}/latest
+Get the latest application scan for a specific project
+
+Parameters
+Try it out
+Name	Description
+projectId *
+string
+(path)
+projectId
+Responses
+Code	Description	Links
+200	
+Latest application scan retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "auth": 0,
+    "secrets": 0,
+    "dependencies": 0,
+    "dataStorage": 0,
+    "apiSurface": 0,
+    "webHygiene": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.495Z",
+    "completedAt": "2025-12-18T16:42:17.495Z",
+    "errorMessage": "string"
+  },
+  "framework": "string",
+  "language": "string",
+  "createdAt": "2025-12-18T16:42:17.495Z",
+  "updatedAt": "2025-12-18T16:42:17.495Z"
+}
+No links
+404	
+Project not found
+
+No links
+
+GET
+/application-scans/{id}
+Get an application scan by ID
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Application scan retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "auth": 0,
+    "secrets": 0,
+    "dependencies": 0,
+    "dataStorage": 0,
+    "apiSurface": 0,
+    "webHygiene": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.502Z",
+    "completedAt": "2025-12-18T16:42:17.502Z",
+    "errorMessage": "string"
+  },
+  "framework": "string",
+  "language": "string",
+  "createdAt": "2025-12-18T16:42:17.502Z",
+  "updatedAt": "2025-12-18T16:42:17.502Z"
+}
+No links
+404	
+Application scan not found
+
+No links
+
+PATCH
+/application-scans/{id}/status
+Update application scan status (internal use)
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Scan status updated successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "auth": 0,
+    "secrets": 0,
+    "dependencies": 0,
+    "dataStorage": 0,
+    "apiSurface": 0,
+    "webHygiene": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.506Z",
+    "completedAt": "2025-12-18T16:42:17.506Z",
+    "errorMessage": "string"
+  },
+  "framework": "string",
+  "language": "string",
+  "createdAt": "2025-12-18T16:42:17.506Z",
+  "updatedAt": "2025-12-18T16:42:17.506Z"
+}
+No links
+
+PATCH
+/application-scans/{id}/results
+Update application scan results (internal use)
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Scan results updated successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "_id": "string",
+  "project": "string",
+  "scannedBy": "string",
+  "commitHash": "string",
+  "repositoryUrl": "string",
+  "branch": "string",
+  "scores": {
+    "overall": 0,
+    "auth": 0,
+    "secrets": 0,
+    "dependencies": 0,
+    "dataStorage": 0,
+    "apiSurface": 0,
+    "webHygiene": 0
+  },
+  "issueCounts": {
+    "total": 0,
+    "critical": 0,
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "coverage": 0,
+  "findings": [
+    {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "severity": "critical",
+      "category": "string",
+      "evidence": "string",
+      "recommendation": "string",
+      "status": "open",
+      "pointsDeducted": 0
+    }
+  ],
+  "scanStatus": {
+    "status": "pending",
+    "startedAt": "2025-12-18T16:42:17.510Z",
+    "completedAt": "2025-12-18T16:42:17.510Z",
+    "errorMessage": "string"
+  },
+  "framework": "string",
+  "language": "string",
+  "createdAt": "2025-12-18T16:42:17.510Z",
+  "updatedAt": "2025-12-18T16:42:17.510Z"
+}
+No links
+Uploads
+File uploads for zipped repositories
+
+
+
+POST
+/uploads/zip
+Upload a zipped repository
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+201	
+File uploaded successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "filename": "string",
+  "path": "string",
+  "size": 0
+}
+No links
+400	
+Invalid file type or size
+
+No links
+Scans
+Security scan initiation and management
+
+
+
+POST
+/scans/initiate
+Initiate a security scan
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{}
+Responses
+Code	Description	Links
+201	
+No links
+
+POST
+/scans/batch
+Initiate multiple security scans
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Example Value
+Schema
+{}
+Responses
+Code	Description	Links
+201	
+Batch scans initiated successfully
+
+No links
+Notifications
+In-app notifications and real-time updates
+
+
+
+GET
+/notifications
+Get all notifications for the current user
+
+
+Parameters
+Try it out
+Name	Description
+limit
+number
+(query)
+Number of notifications to return
+
+limit
+offset
+number
+(query)
+Number of notifications to skip
+
+offset
+read
+boolean
+(query)
+Filter by read status
+
+
+--
+category
+string
+(query)
+Filter by category
+
+category
+Responses
+Code	Description	Links
+200	
+Notifications retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "notifications": [
+    {
+      "id": "string",
+      "type": "info",
+      "category": "scan",
+      "title": "string",
+      "message": "string",
+      "read": true,
+      "data": {},
+      "createdAt": "2025-12-18T16:42:17.525Z",
+      "readAt": "2025-12-18T16:42:17.525Z"
+    }
+  ],
+  "total": 0
+}
+No links
+
+DELETE
+/notifications
+Delete all notifications
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+All notifications deleted successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "deletedCount": 0
+}
+No links
+
+GET
+/notifications/unread-count
+Get unread notifications count
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Unread count retrieved successfully
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "count": 0
+}
+No links
+
+PUT
+/notifications/{id}/read
+Mark a notification as read
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Notification marked as read
+
+No links
+404	
+Notification not found
+
+No links
+
+PUT
+/notifications/mark-all-read
+Mark all notifications as read
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+All notifications marked as read
+
+Media type
+
+application/json
+Controls Accept header.
+Example Value
+Schema
+{
+  "modifiedCount": 0
+}
+No links
+
+DELETE
+/notifications/{id}
+Delete a notification
+
+
+Parameters
+Try it out
+Name	Description
+id *
+string
+(path)
+id
+Responses
+Code	Description	Links
+200	
+Notification deleted successfully
+
+No links
+404	
+Notification not found
+
+No links
+
+POST
+/notifications/test
+Create a test notification (for development)
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+201	
+Test notification created successfully
+
+No links
+
+GET
+/notifications/stream
+Server-Sent Events stream for real-time notifications
+
+Parameters
+Try it out
+Name	Description
+token *
+string
+(query)
+JWT token for authentication
+
+token
+Responses
+Code	Description	Links
+200	
+No links
+Subscription
+
+
+GET
+/subscription/status
+Get user subscription status and limits
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Subscription information retrieved successfully
+
+No links
+
+POST
+/subscription/check-scan-eligibility
+Check if user can perform a scan
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Scan eligibility checked
+
+No links
+
+POST
+/subscription/record-scan
+Record a scan usage
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Scan usage recorded successfully
+
+No links
+
+POST
+/subscription/upgrade/{planId}
+Upgrade user subscription plan
+
+
+Parameters
+Try it out
+Name	Description
+planId *
+string
+(path)
+planId
+Responses
+Code	Description	Links
+200	
+Subscription upgraded successfully
+
+No links
+
+POST
+/subscription/cancel
+Cancel user subscription
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Subscription cancelled successfully
+
+No links
+
+POST
+/subscription/add-credits
+Add one-time scan credits
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Credits added successfully
+
+No links
+
+GET
+/subscription/features/{feature}
+Check if user has access to a specific feature
+
+
+Parameters
+Try it out
+Name	Description
+feature *
+string
+(path)
+feature
+Responses
+Code	Description	Links
+200	
+Feature access checked
+
+No links
+Admin - Scoring Configuration
+
+
+GET
+/admin/scoring-config
+Get current scoring configuration (Admin only)
+
+
+Parameters
+Try it out
+No parameters
+
+Responses
+Code	Description	Links
+200	
+Scoring configuration retrieved successfully
+
+No links
+401	
+Unauthorized
+
+No links
+403	
+Forbidden - Admin access required
+
+No links
+
+PUT
+/admin/scoring-config
+Update scoring configuration (Admin only)
+
+
+Parameters
+Try it out
+No parameters
+
+Request body
+
+application/json
+Scoring configuration object
+
+Example Value
+Schema
+{
+  "version": "1.0.0",
+  "severityMultipliers": {
+    "low": 1,
+    "medium": 2,
+    "high": 4,
+    "critical": 6
+  }
+}
+Responses
+Code	Description	Links
+200	
+Scoring configuration updated successfully
+
+No links
+400	
+Invalid configuration structure
+
+No links
+401	
+Unauthorized
+
+No links
+403	
+Forbidden - Admin access required
+
+No links
+PDF
+
+
+GET
+/pdf/project/{projectId}
+Generate and download project security report PDF
+
+
+Parameters
+Try it out
+Name	Description
+projectId *
+string
+(path)
+Project ID
+
+projectId
+Responses
+Code	Description	Links
+200	
+PDF file
+
+Media type
+
+application/pdf
+Controls Accept header.
+No links
+403	
+Access denied
+
+No links
+404	
+Project not found

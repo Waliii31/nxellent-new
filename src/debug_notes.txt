@@ -1,0 +1,9 @@
+
+// Temporary debug component to check project types
+/*
+const DebugTypes = ({ projects }: { projects: any[] }) => (
+  <div style={{ position: 'fixed', bottom: 0, right: 0, background: 'black', color: 'lime', zIndex: 9999, padding: '10px' }}>
+    {projects.map(p => <div key={p.id}>{p.name}: {p.type}</div>)}
+  </div>
+);
+*/

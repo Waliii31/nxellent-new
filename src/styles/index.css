@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Alexandria:wght@100..900&family=Anybody:ital,wght@0,100..900;1,100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+body{
+    background: #00011d;
+}
+
+/* tailwind.css */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+
+.nav-link{
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+select option {
+  background-color: #0B0B2A; 
+  color: #ffffff;            
+}
+
+.inter{
+    font-family: 'Inter', sans-serif;
+}
+
+.jakarta{
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.anybody{
+    font-family: 'Anybody', sans-serif;
+}
+
+.alexandria{
+    font-family: 'Alexandria', sans-serif;
+}
+
+.urbanist{
+    font-family: 'Urbanist', sans-serif;
+}
