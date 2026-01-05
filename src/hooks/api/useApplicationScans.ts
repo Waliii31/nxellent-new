@@ -38,9 +38,8 @@ export const useLatestApplicationScanForProject = (projectId?: string) =>
   useQuery<ApplicationScanResponseDto | null>({
     queryKey: ["application-scans-project-latest", projectId],
     enabled: !!projectId,
-    refetchInterval: 5000, // Refetch every 5 seconds
     retry: false, // Don't retry on error
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       try {
         const response = await api.get<ApplicationScanResponseDto>(

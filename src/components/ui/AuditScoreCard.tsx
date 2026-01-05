@@ -30,15 +30,10 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   const scanType = latestContractScan ? "Contract" : latestApplicationScan ? "Application" : "No Scan";
 
 
-  // Conditionally poll if we have a project ID
-  const { data: polledContractScan } = useLatestContractScanForProject(projectId);
-  const { data: polledAppScan } = useLatestApplicationScanForProject(projectId);
+  // Use props directly instead of polling
+  const currentContractScan = latestContractScan;
+  const currentAppScan = latestApplicationScan;
 
-  // Merge polled data if available, effectively allowing "auto-update"
-  const currentContractScan = polledContractScan !== undefined ? polledContractScan : latestContractScan;
-  const currentAppScan = polledAppScan !== undefined ? polledAppScan : latestApplicationScan;
-
-  // Re-determine primary scan with potential new data
   const primaryScan = currentContractScan || currentAppScan;
   const scanStatus = primaryScan?.scanStatus?.status;
 

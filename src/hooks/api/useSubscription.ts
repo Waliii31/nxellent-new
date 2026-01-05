@@ -1,5 +1,5 @@
 // src/hooks/api/useSubscription.ts
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../../services/api";
 import type {
   SubscriptionStatusDto,
@@ -31,10 +31,15 @@ export const useSubscriptionUpgrade = () =>
       api.post(`/subscription/upgrade/${planId}`).then((r) => r.data),
   });
 
-export const useSubscriptionCancel = () =>
-  useMutation({
-    mutationFn: () => api.post("/subscription/cancel").then((r) => r.data),
+export const useSubscriptionCancel = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.post("/subscription/cancel", {}).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["subscription-status"] });
+    },
   });
+};
 
 export const useSubscriptionAddCredits = () =>
   useMutation({
