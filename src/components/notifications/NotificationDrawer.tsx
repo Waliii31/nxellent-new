@@ -444,28 +444,6 @@ export default function NotificationDrawer({ open, onClose }: Props) {
                   </motion.div>
                 ))}
             </motion.div>
-
-            {/* Footer with Test Button */}
-            <div className="absolute bottom-0 left-0 right-0 px-6 py-4 border-t border-white/10 bg-[#07051A]/95 backdrop-blur-sm">
-              <button
-                type="button"
-                onClick={handleCreateTest}
-                disabled={createTest.isPending}
-                className="w-full flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-[#D467B9]/20 to-[#5FA8FF]/20 border border-[#FD7EFF]/30 text-sm font-medium text-white hover:from-[#D467B9]/30 hover:to-[#5FA8FF]/30 hover:border-[#FD7EFF]/50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {createTest.isPending ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    Sending test notification...
-                  </>
-                ) : (
-                  <>
-                    <PlusCircle size={16} />
-                    Create test notification
-                  </>
-                )}
-              </button>
-            </div>
           </motion.aside >
         </motion.div >
       )}
