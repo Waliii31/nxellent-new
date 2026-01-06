@@ -1,8 +1,7 @@
 import { ArrowRight, Shield, AlertCircle, CheckCircle2, Clock, Scan } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLatestContractScanForProject } from "../../hooks/api/useContractScans";
-import { useLatestApplicationScanForProject } from "../../hooks/api/useApplicationScans";
+
 
 type AuditScoreCardProps = {
   protocolName?: string;

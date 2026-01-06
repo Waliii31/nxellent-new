@@ -6,7 +6,6 @@ import {
   CheckCheck,
   Loader2,
   Trash2,
-  PlusCircle,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSelector } from "react-redux";
@@ -18,7 +17,7 @@ import {
   useUnreadCount,
   useDeleteAllNotifications,
   useDeleteNotification,
-  useCreateTestNotification,
+
   notificationsKey,
   unreadCountKey,
 } from "../../hooks/api/useNotifications";
@@ -69,7 +68,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
   const markAllRead = useMarkAllNotificationsRead();
   const deleteAll = useDeleteAllNotifications();
   const deleteOne = useDeleteNotification();
-  const createTest = useCreateTestNotification();
+
 
   useEffect(() => {
     if (!token) return;
@@ -151,63 +150,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
     deleteAll.mutate();
   };
 
-  const handleCreateTest = () => {
-    createTest.mutate(undefined, {
-      onSuccess: (data) => {
-        // Show toast with custom UI
-        toast((t) => (
-          <div className="relative w-80 rounded-2xl bg-[#07051A]/95 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden p-4 flex gap-4">
-            {/* Gradient background effect */}
-            <div className="absolute inset-0 bg-linear-to-br from-[#7A49F2]/10 via-transparent to-[#FD7EFF]/5 pointer-events-none" />
 
-            {/* Left accent border */}
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-linear-to-b from-[#7A49F2] to-[#5FA8FF]" />
-
-            {/* Icon */}
-            <div className="shrink-0 w-10 h-10 rounded-xl bg-linear-to-br from-[#7A49F2] to-[#5FA8FF] p-px">
-              <div className="w-full h-full rounded-xl bg-[#0B0B2A] flex items-center justify-center">
-                <CheckCheck size={18} className="text-white" />
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 min-w-0 z-10 pt-0.5">
-              <div className="flex items-start justify-between gap-2">
-                <h4 className="text-white font-bold text-sm tracking-wide leading-tight">{data?.title || "Test Notification"}</h4>
-                <button
-                  onClick={() => toast.dismiss(t.id)}
-                  className="shrink-0 text-white/40 hover:text-white transition-colors p-1 -mt-1 -mr-1 rounded-full hover:bg-white/10"
-                >
-                  <X size={14} />
-                </button>
-              </div>
-              {data?.message && (
-                <p className="text-white/70 text-xs mt-1.5 leading-relaxed font-medium">
-                  {data.message}
-                </p>
-              )}
-            </div>
-          </div>
-        ));
-
-        // also refetch list + unread after manual test
-        qc.invalidateQueries({ queryKey: listKey, refetchType: "active" });
-        qc.invalidateQueries({
-          queryKey: unreadCountKey,
-          refetchType: "active",
-        });
-      },
-      onError: () => {
-        toast.error("Failed to create test notification", {
-          style: {
-            background: '#1A0A0A',
-            border: '1px solid #3d1a1a',
-            color: '#ff8888'
-          }
-        });
-      },
-    });
-  };
 
   const unreadCount = unreadData?.count ?? 0;
 
@@ -390,14 +333,14 @@ export default function NotificationDrawer({ open, onClose }: Props) {
                   >
                     {/* Gradient Border Wrapper */}
                     <div
-                      className={`rounded-2xl p-px transition-all duration-300 ${n.read
+                      className={`rounded - 2xl p - px transition - all duration - 300 ${n.read
                         ? "bg-white/10"
                         : "bg-linear-to-br from-[#D467B9]/50 via-[#5FA8FF]/50 to-[#D467B9]/50"
-                        }`}
+                        } `}
                     >
                       <div
-                        className={`rounded-2xl p-4 bg-[#0d0b1d] backdrop-blur-sm flex flex-col gap-3 transition-all duration-300 ${n.read ? "opacity-60" : ""
-                          }`}
+                        className={`rounded - 2xl p - 4 bg - [#0d0b1d] backdrop - blur - sm flex flex - col gap - 3 transition - all duration - 300 ${n.read ? "opacity-60" : ""
+                          } `}
                       >
                         {/* Header Row */}
                         <div className="flex items-start justify-between gap-3">
