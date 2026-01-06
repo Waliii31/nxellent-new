@@ -457,9 +457,33 @@ const ProjectDetails: React.FC = () => {
                 <header className="flex flex-col md:flex-row justify-between gap-6 md:items-center mb-8">
                     <div className="flex flex-col gap-3">
                         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                            <SubtlePill className="uppercase text-[10px] tracking-wide">
-                                {project.platform || "Unknown Platform"}
-                            </SubtlePill>
+                            {(() => {
+                                const appFramework = latestApplicationScanData?.framework || project.latestApplicationScan?.framework;
+                                const contractFramework = latestContractScanData?.framework || project.latestContractScan?.framework;
+
+                                if (!appFramework && !contractFramework) {
+                                    return (
+                                        <SubtlePill className="uppercase text-[10px] tracking-wide">
+                                            UNKNOWN PLATFORM
+                                        </SubtlePill>
+                                    );
+                                }
+
+                                return (
+                                    <>
+                                        {appFramework && (
+                                            <SubtlePill className="uppercase text-[10px] tracking-wide">
+                                                {appFramework}
+                                            </SubtlePill>
+                                        )}
+                                        {contractFramework && (
+                                            <SubtlePill className="uppercase text-[10px] tracking-wide">
+                                                {contractFramework}
+                                            </SubtlePill>
+                                        )}
+                                    </>
+                                );
+                            })()}
 
                             <SubtlePill className="uppercase text-[10px] tracking-wide bg-white/5 border-white/40 text-[#FD7EFF]">
                                 {project.visibility}
