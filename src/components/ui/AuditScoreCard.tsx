@@ -26,7 +26,7 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
 
   // Determine which scan to display (prefer contract, fallback to application)
   // const primaryScan = latestContractScan || latestApplicationScan; // MOVED DOWN
-  const scanType = latestContractScan ? "Contract" : latestApplicationScan ? "Application" : "No Scan";
+  const scanType = (latestContractScan && latestApplicationScan) ? "Full-Stack" : latestContractScan ? "Contract" : latestApplicationScan ? "Application" : "No Scan";
 
 
   // Use props directly instead of polling
