@@ -81,8 +81,7 @@ const Pricing = () => {
       <CtaSection
         heading={
           <>
-            Your Code is already being judged. <br />
-            Make sure it’s nxellent
+            start your first nxellent scan today. <br /> prove your code is ready.
           </>
         }
         primary={{

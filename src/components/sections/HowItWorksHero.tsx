@@ -20,15 +20,12 @@ const HowItWorksHero = () => {
 
       {/* Content */}
       <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-4 sm:px-6 md:px-8 lg:px-10 pb-6 sm:pb-10 md:pb-14 z-20">
-        <h1 className="anybody text-white font-semibold font-[anybody ] text-[26px] sm:text-[34px] md:text-[42px] lg:text-[48px] leading-tight sm:leading-[50px] md:leading-[60px]">
-          From Code To Score <br />
-          In Minutes
+        <h1 className="text-white font-semibold text-lg sm:text-2xl md:text-4xl lg:text-5xl leading-tight">
+          Cybersecurity Assessment for <br /> Your Projects.
         </h1>
 
-        <p className="alexandria text-white/90 font-light mt-3 sm:mt-4 md:mt-5 font-[Alexandria] text-[13px] sm:text-[15px] md:text-[17px] lg:text-[18px] leading-relaxed tracking-[-0.02em] max-w-2xl">
-          NXELLENT scans your smart contracts and apps, applies industry-
-          <br className="hidden sm:block" />
-          grade rules, and generates a score investors can trust.
+        <p className="text-white/90 font-light mt-4 sm:mt-5 md:mt-6 text-xs sm:text-sm md:text-base lg:text-lg leading-relaxed tracking-tight max-w-2xl">
+          NXELLENT analyses your code identifies security risks, and produces decision grade risk <br /> intelligence with recommendations founders and investors can act on.
         </p>
 
         <img

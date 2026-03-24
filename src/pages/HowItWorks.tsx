@@ -16,12 +16,11 @@ const HowItWorks = () => {
       <CtaSection
         heading={
           <>
-            Your Code is already being judged. <br />
-            Make sure it’s nxellent
+            Your code will be judged.<br />Make sure NXELLENT judges it first.
           </>
         }
         primary={{
-          label: "Submit Your Project",
+          label: "Run Full Scan",
           icon: <ArrowUpRight size={16} />,
           whereTo: "projects/my-projects",
         }}

@@ -1,3 +1,4 @@
+import SegmentedToggle from "../ui/SegmentedToggle";
 import Navbar from "./Navbar";
 
 
@@ -23,6 +24,7 @@ const LeaderHero = () => {
         <p className="alexandria text-white/90 mt-3 sm:mt-4 font-[Alexandria] text-[16px] sm:text-[18px] md:text-[20px] leading-[100%] tracking-[-0.02em] max-w-2xl">
           See how the top projects stack up. Get inspired. Get competitive.
         </p>
+        <SegmentedToggle/>
       </div>
     </section>
   );

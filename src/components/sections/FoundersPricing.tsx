@@ -34,7 +34,7 @@ const plans: Plan[] = [
         title: "Free",
         price: "$0",
         cadence: "forever",
-        icon: "/speaker.png",
+        icon: "/free.png",
         features: [
             "1 Public Scan",
             "Basic Badge",
@@ -49,7 +49,7 @@ const plans: Plan[] = [
         title: "Starter",
         price: "$29",
         cadence: "per month",
-        icon: "/power.png",
+        icon: "/starter.png",
         features: [
             "3 Scans per Month",
             "Public + Private Scans",

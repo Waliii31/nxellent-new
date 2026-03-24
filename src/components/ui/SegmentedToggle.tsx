@@ -22,7 +22,7 @@ const SegmentedToggle: React.FC<SegmentedToggleProps> = ({
       role="tablist"
       className="
         relative inline-flex items-center
-        rounded-[999px] p-1
+        rounded-[999px] p-1 my-7
         border border-[#FD7EFF]
         shadow-[0_0_6px_rgba(0,0,0,0.15)]
         overflow-hidden
@@ -33,7 +33,8 @@ const SegmentedToggle: React.FC<SegmentedToggleProps> = ({
       {/* Sliding pink pill — no overflow on either side */}
       <div
         className={[
-          "absolute inset-y-1 rounded-[999px] bg-[#FFC2C8] w-1/2",
+          "absolute inset-y-1 rounded-[999px] w-1/2",
+          "bg-gradient-to-r from-[#FFC857] via-[#FF8A3C] to-[#FF0040]",
           "transition-all duration-300 ease-out",
           value === "smart" ? "left-1 right-auto" : "right-1 left-auto",
         ].join(" ")}
