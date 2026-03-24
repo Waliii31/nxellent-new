@@ -168,7 +168,7 @@ const ScanModal: React.FC<ScanModalProps> = ({
                                 <button
                                     type="submit"
                                     disabled={isSubmitting || !projectName.trim()}
-                                    className="flex-1 px-6 py-3 rounded-full bg-[#FFC2C8] text-[#1A1A1A] font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_0_#FFC2C833]"
+                                    className="flex-1 px-6 py-3 rounded-full bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none shadow-[0_0_10px_rgba(255,0,64,0.35)]"
                                 >
                                     {isSubmitting ? (
                                         "Starting..."

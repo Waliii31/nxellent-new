@@ -104,9 +104,9 @@ const DeFiProtocolSecurityReport: React.FC = () => {
         </header>
 
         {/* Tabs Navigation */}
-        <div className={"my-14 flex justify-start"}>
+        <div className="my-14">
           <div
-            className={"flex gap-2 p-1 rounded-full"}
+            className="flex flex-wrap gap-2 p-1 rounded-full"
             style={{
               border: "1px solid #FD7EFF",
               backgroundColor: "rgb(0 0 0 / 10%)",
@@ -118,8 +118,8 @@ const DeFiProtocolSecurityReport: React.FC = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-12 py-3.5 cursor-pointer rounded-full inter text-sm font-semibold transition-all duration-200 ${isActive
-                    ? "bg-[#FFC2C8] text-[#090123]"
+                  className={`flex-1 min-w-[110px] sm:min-w-40 justify-center text-center px-3 sm:px-6 py-2 sm:py-3 cursor-pointer rounded-full inter text-xs sm:text-sm font-semibold transition-all duration-200 ${isActive
+                    ? "bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] shadow-[0_0_10px_rgba(255,0,64,0.35)]"
                     : "text-white/70 hover:text-white"
                     }`}
                 >

@@ -41,7 +41,7 @@ const SignUp = () => {
   return (
     <section
       style={{
-        background: "url(/auth-page.png)",
+        background: "url(/auth-bg.png)",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -294,11 +294,13 @@ const SignUp = () => {
                 }}
                 disabled={loading}
                 className={[
-                  "w-full  h-12 rounded-full",
-                  "rounded-[72px]",
+                  "w-full h-12 rounded-[72px] cursor-pointer",
                   "text-[16px] font-medium",
-                  "bg-[#FFC2C8] text-[#333333]",
-                  "shadow-[0_0_6px_0_#00000026]",
+                  "bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)]",
+                  "text-[#333333]",
+                  "shadow-[0_0_10px_rgba(255,0,64,0.35)]",
+                  "transition-all duration-300",
+                  "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none",
                 ].join(" ")}
                 style={{
                   border: "1px solid",

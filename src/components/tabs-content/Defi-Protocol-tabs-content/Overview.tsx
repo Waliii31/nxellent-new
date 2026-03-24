@@ -3,6 +3,14 @@ import PrimaryButton from "../../ui/PrimaryButton";
 import SecondaryButton from "../../ui/SecondaryButton";
 
 const Overview = () => {
+  const score = 92;
+  const badgeSrc =
+    score >= 90
+      ? "/platinium-badge.png"
+      : score >= 70
+      ? "/gold-badge.png"
+      : "/silver-badge.png";
+
   return (
     <main
       className="
@@ -64,11 +72,19 @@ const Overview = () => {
             </div>
           </div>
 
-          <img
-            className="w-32 sm:w-40 md:w-44 lg:w-52 max-w-full"
-            src="/92_platinium.svg"
-            alt=""
-          />
+          <div
+            className="relative w-32 sm:w-40 md:w-44 lg:w-52 h-32 sm:h-40 md:h-44 lg:h-52 max-w-full rounded-2xl bg-center bg-contain bg-no-repeat flex items-center justify-center"
+            style={{ backgroundImage: `url(${badgeSrc})` }}
+          >
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <span className="anybody text-xl sm:text-3xl md:text-4xl font-bold text-white drop-shadow-[0_0_8px_rgba(0,0,0,0.7)]">
+                {score}
+              </span>
+              <span className="text-xs sm:text-sm font-semibold text-white uppercase drop-shadow-[0_0_6px_rgba(0,0,0,0.7)]">
+                {score >= 90 ? "Platinum" : score >= 70 ? "Gold" : "Silver"}
+              </span>
+            </div>
+          </div>
         </div>
       </GlowCard>
 

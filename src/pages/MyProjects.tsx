@@ -96,7 +96,7 @@ export default function MyProjects(): React.ReactElement {
             {/* NEW SCAN BUTTON */}
             <button
               onClick={() => navigate("/scanner")}
-              className="jakarta bg-[#FFC2C8] text-[#333333] hover:opacity-90 cursor-pointer font-semibold rounded-full px-10 py-4 flex items-center gap-2.5 whitespace-nowrap shadow-lg"
+              className="jakarta bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] hover:opacity-90 cursor-pointer font-semibold rounded-full px-10 py-4 flex items-center gap-2.5 whitespace-nowrap shadow-[0_0_10px_rgba(255,0,64,0.35)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
             >
               <Plus size={18} />
               <span>New Scan</span>

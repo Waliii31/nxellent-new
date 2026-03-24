@@ -95,15 +95,3 @@ const SegmentedToggle: React.FC<SegmentedToggleProps> = ({
 };
 
 export default SegmentedToggle;
-
-
-
-git add .; git commit -m "Frontend UI updates: button gradients, segmented toggle, pricing cards, and notification style" -m "Detailed changes:\n\n- PrimaryButton: switched solid bg to gradient `from-[#FFC857] via-[#FF8A3C] via-[#FF3EC4] to-[#FF0040]` + text color to gray `#6B7280` (updated hover shadow).\n- SegmentedToggle: updated outer background gradient to `linear-gradient(90deg, #FFC857 0%, #FF8A3C 35%, #FF3EC4 80%, #6C1CE7 100%)`; added vertical spacing `my-4`; changed sliding pill from solid pink to gradient matching design; preserved active/inactive label colors.\n- InvestorPricing: verified content mapping to design (plan titles, prices, features, CTA texts), and ensured Enterprise card uses filled gradient wrapper; no logic changes besides UI arrangement.\n- NotificationDrawer: added gradient and accent border treatment for toast and panel visuals; no backend behavior altered.\n- Updated multiple sections and pages for visual consistency: FoundersPricing, HowItWorksHero, LeaderHero, Home, HowItWorks, Pricing.\n- Added/updated assets: public/compare-plan.svg, public/pro.png, public/free.png, public/starter.png.\n\nAll changes are frontend presentation/UI-only; no backend routes/services or database changes."; git push origin main
-
-✅ Done: all changes committed and pushed to `main` successfully.
-
-- Commit title: `Frontend UI updates: button gradients, segmented toggle, pricing cards, and notification style`
-- Commit body included the full descriptive list of edits and confirmation that they are frontend-only.
-- `git push origin main` completed with “Everything up-to-date”.
-
-Your requested workflow is complete and the main branch now has the upgraded UI/visual code.

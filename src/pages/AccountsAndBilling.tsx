@@ -88,7 +88,7 @@ const AccountsAndBilling: React.FC = () => {
                       "py-3 sm:py-3.5 px-5 sm:px-12",
                       "w-full sm:w-auto sm:flex-1 text-center",
                       isActive
-                        ? "bg-[#FFC2C8] text-[#090123]"
+                        ? "bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] shadow-[0_0_10px_rgba(255,0,64,0.35)] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
                         : "text-white/70 hover:text-white",
                     ].join(" ")}
                   >

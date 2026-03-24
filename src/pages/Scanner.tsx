@@ -691,7 +691,7 @@ const Scanner: React.FC = () => {
                 {showUpgradeButton && (
                   <button
                     onClick={() => navigate("/pricing")}
-                    className="flex cursor-pointer items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[#FFC2C8] text-[#333333] text-sm font-semibold hover:opacity-90 transition-opacity"
+                    className="flex cursor-pointer items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] text-sm font-semibold hover:opacity-90 transition-all duration-300 shadow-[0_0_10px_rgba(255,0,64,0.35)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
                   >
                     View Pricing Plans
                   </button>
@@ -710,9 +710,9 @@ const Scanner: React.FC = () => {
               onClick={handleScanStart}
               className={[
                 "w-full rounded-full px-6 py-3 font-semibold flex items-center justify-center gap-2",
-                "bg-[#FFC2C8] text-[#333333]",
-                "shadow-[0_0_6px_0_#00000026]",
-                "transition hover:scale-[1.01] disabled:opacity-60 disabled:cursor-not-allowed",
+                "bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333]",
+                "shadow-[0_0_10px_rgba(255,0,64,0.35)]",
+                "transition-all duration-300 hover:scale-[1.01] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none",
               ].join(" ")}
               style={{
                 border: "1px solid",
