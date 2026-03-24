@@ -133,8 +133,9 @@ const Card: React.FC<CardProps> = ({
             } else {
                 alert("Failed to create checkout session. Please try again.");
             }
-        } catch (error: any) {
-            const errorMessage = error?.response?.data?.message || "Unknown error";
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            const errorMessage = err?.response?.data?.message || "Unknown error";
             alert(`Failed to initiate checkout: ${errorMessage}`);
         } finally {
             setSubmitting(false);

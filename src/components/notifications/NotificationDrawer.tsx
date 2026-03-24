@@ -76,10 +76,11 @@ export default function NotificationDrawer({ open, onClose }: Props) {
      * SSE: whenever a notification arrives, just invalidate and refetch
      * the notifications list + unread count. No manual merging.
      */
-    const es = createNotificationsStream(token, (newItem: any) => {
+    const es = createNotificationsStream(token, (newItem: unknown) => {
       // Show toast
       // Handle potential nested structures or direct object
-      const notif = newItem?.data || newItem?.payload || newItem?.notification || newItem;
+      const item = newItem as Record<string, unknown>;
+      const notif = (item?.data || item?.payload || item?.notification || item) as { title?: string; message?: string };
 
       if (notif && (notif.title || notif.message)) {
         toast((t) => (

@@ -96,8 +96,9 @@ const Profile: React.FC = () => {
       });
       setPasswordSuccess("Password updated successfully!");
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    } catch (error: any) {
-      setPasswordError(error?.response?.data?.message || "Failed to update password");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setPasswordError(err?.response?.data?.message || "Failed to update password");
     }
   };
 
@@ -127,8 +128,9 @@ const Profile: React.FC = () => {
       await updateEmail.mutateAsync({ newEmail, currentPassword: emailPassword });
       setEmailSuccess("Email updated successfully!");
       setEmailPassword("");
-    } catch (error: any) {
-      setEmailError(error?.response?.data?.message || "Failed to update email");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setEmailError(err?.response?.data?.message || "Failed to update email");
     }
   };
 
@@ -148,8 +150,9 @@ const Profile: React.FC = () => {
 
     try {
       await deleteAccount.mutateAsync({ password: deletePassword, confirmation: deleteConfirmation });
-    } catch (error: any) {
-      setDeleteError(error?.response?.data?.message || "Failed to delete account");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setDeleteError(err?.response?.data?.message || "Failed to delete account");
     }
   };
 
@@ -297,7 +300,7 @@ const Profile: React.FC = () => {
               <div>
                 <p className="text-white/60 text-xs uppercase tracking-wider">Member Since</p>
                 <p className="text-white font-medium text-sm">
-                  {formatDate((currentUser as any)?.createdAt)}
+                  {formatDate((currentUser as unknown as Record<string, unknown>)?.createdAt as string)}
                 </p>
               </div>
             </div>

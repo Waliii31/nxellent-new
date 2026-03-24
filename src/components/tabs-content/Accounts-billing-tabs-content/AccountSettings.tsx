@@ -83,8 +83,9 @@ export default function AccountSettings(): React.ReactElement {
       });
       setPasswordSuccess("Password updated successfully!");
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    } catch (error: any) {
-      setPasswordError(error?.response?.data?.message || "Failed to update password");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setPasswordError(err?.response?.data?.message || "Failed to update password");
     }
   };
 
@@ -115,8 +116,9 @@ export default function AccountSettings(): React.ReactElement {
       await updateEmail.mutateAsync({ newEmail, currentPassword: emailPassword });
       setEmailSuccess("Email updated successfully!");
       setEmailPassword("");
-    } catch (error: any) {
-      setEmailError(error?.response?.data?.message || "Failed to update email");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setEmailError(err?.response?.data?.message || "Failed to update email");
     }
   };
 
@@ -137,8 +139,9 @@ export default function AccountSettings(): React.ReactElement {
     try {
       await deleteAccount.mutateAsync({ password: deletePassword, confirmation: deleteConfirmation });
       // User will be redirected by the hook
-    } catch (error: any) {
-      setDeleteError(error?.response?.data?.message || "Failed to delete account");
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      setDeleteError(err?.response?.data?.message || "Failed to delete account");
     }
   };
 

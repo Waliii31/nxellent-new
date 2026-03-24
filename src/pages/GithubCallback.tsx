@@ -37,8 +37,7 @@ const GithubCallback = () => {
         );
 
         navigate("/", { replace: true });
-      } catch (e) {
-        // eslint-disable-next-line no-console
+      } catch {
         setError("GitHub login failed, please try again.");
       }
     };

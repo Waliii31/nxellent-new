@@ -26,8 +26,9 @@ const Login = () => {
       dispatch(setCredentials(data));
       navigate(from, { replace: true });
     },
-    onError: (err: any) => {
-      setError(err?.response?.data?.message || "Login failed");
+    onError: (err: unknown) => {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error?.response?.data?.message || "Login failed");
     },
   });
 

@@ -113,9 +113,9 @@ const MyPortfolio = () => {
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       const latest = history[0];
       const previous = history[1];
-      const score = p.scoringDetails?.overall ||
-        (latest?.scores?.overall) ||
-        Number((p as any).score) ||
+      const score = Number(p.scoringDetails?.overall) ||
+        Number(latest?.scores?.overall) ||
+        Number(p.score) ||
         0;
       const tier = tierFromScore(score);
       const change = formatChange(latest?.scores?.overall, previous?.scores?.overall);

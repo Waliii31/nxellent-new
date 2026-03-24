@@ -46,9 +46,10 @@ export const useLatestApplicationScanForProject = (projectId?: string) =>
           `/application-scans/project/${projectId}/latest`
         );
         return response.data;
-      } catch (error: any) {
+      } catch (error: unknown) {
         // If 404, return null - no scan exists yet
-        if (error?.response?.status === 404) {
+        const err = error as { response?: { status?: number } };
+        if (err?.response?.status === 404) {
           return null;
         }
         throw error;

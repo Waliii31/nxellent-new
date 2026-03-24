@@ -80,13 +80,13 @@ function InvestorAccessDenied() {
   );
 }
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: any }> {
-  constructor(props: any) {
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: unknown }> {
+  constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false, error: null };
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(error: unknown) {
     return { hasError: true, error };
   }
 
@@ -101,8 +101,8 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
           <div className="max-w-2xl w-full bg-white/5 border border-red-500/30 rounded-xl p-8">
             <h1 className="text-2xl font-bold text-red-400 mb-4">Something went wrong</h1>
             <pre className="text-sm font-mono text-white/70 bg-black/50 p-4 rounded-lg overflow-auto max-h-[400px]">
-              {this.state.error?.toString()}
-              {this.state.error?.stack}
+              {typeof this.state.error === 'object' && this.state.error !== null ? (this.state.error as Error).toString() : String(this.state.error)}
+              {typeof this.state.error === 'object' && this.state.error !== null ? (this.state.error as Error).stack : ''}
             </pre>
             <button
               onClick={() => window.location.reload()}
@@ -213,7 +213,7 @@ function CompareProjectsContent() {
       const pId = (p.id || p._id) as string;
       const history = scans
         .filter((s) => {
-          const scanProjectId = typeof s.project === 'object' ? (s.project as any)._id : s.project;
+          const scanProjectId = typeof s.project === 'object' ? (s.project as Record<string, unknown>)._id as string : s.project;
           return scanProjectId === pId;
         })
         .sort((a, b) => {
@@ -233,23 +233,23 @@ function CompareProjectsContent() {
       // Fallback to embedded latest scan if not found in list
       if (!latest) {
         if (String(p.type || "").toLowerCase().includes("app")) {
-          latest = p.latestApplicationScan;
+          latest = p.latestApplicationScan as typeof scans[number] | undefined;
         } else {
-          latest = p.latestContractScan;
+          latest = p.latestContractScan as typeof scans[number] | undefined;
         }
       }
 
       // Safely extract scores with fallback to project.currentScores
-      let latestScores = latest?.scores as any;
+      let latestScores = latest?.scores as unknown;
 
       if (!latestScores && p.scoringDetails) {
         const typeStr = String(p.type || "").toLowerCase();
         if (typeStr.includes("app")) {
-          latestScores = p.scoringDetails.applicationTrack;
+          latestScores = p.scoringDetails?.applicationTrack;
         } else {
-          latestScores = p.scoringDetails.contractTrack;
+          latestScores = p.scoringDetails?.contractTrack;
         }
-        if (!latestScores) latestScores = { overall: p.scoringDetails.overall };
+        if (!latestScores) latestScores = { overall: p.scoringDetails?.overall };
       }
 
       if (!latestScores && p.currentScores) {
@@ -264,26 +264,26 @@ function CompareProjectsContent() {
         if (!latestScores) latestScores = p.currentScores.overall;
       }
 
-      const previousScores = previous?.scores as any;
+      const previousScores = previous?.scores as unknown;
 
       // Robust Score Extraction
-      let score = Number(latestScores?.overall) ||
-        Number((p as any).score) ||
+      const score = Number((latestScores as Record<string, unknown>)?.overall) ||
+        Number(p.score) ||
         Number(p.scoringDetails?.overall) ||
-        Number((p as any).currentScores?.overall?.score) ||
-        Number((p as any).currentScores?.overall) ||
+        Number((p.currentScores?.overall as Record<string, unknown>)?.score) ||
+        Number(p.currentScores?.overall) ||
         0;
 
       const tier = tierFromScore(score);
-      const trend = latest && previous ? (Number(latestScores?.overall) || 0) - (Number(previousScores?.overall) || 0) : 0;
+      const trend = latest && previous ? (Number((latestScores as Record<string, unknown>)?.overall) || 0) - (Number((previousScores as Record<string, unknown>)?.overall) || 0) : 0;
 
       // Robust Metrics Extraction
       const getMetric = (keys: string[]) => {
         for (const key of keys) {
-          if (latestScores && latestScores[key] !== undefined) return Number(latestScores[key]);
-          if (p.scoringDetails?.contractTrack && p.scoringDetails.contractTrack[key] !== undefined) return Number(p.scoringDetails.contractTrack[key]);
-          if (p.scoringDetails?.applicationTrack && p.scoringDetails.applicationTrack[key] !== undefined) return Number(p.scoringDetails.applicationTrack[key]);
-          if ((p as any)[key] !== undefined) return Number((p as any)[key]);
+          if (latestScores && (latestScores as Record<string, unknown>)[key] !== undefined) return Number((latestScores as Record<string, unknown>)[key]);
+          if (p.scoringDetails?.contractTrack && (p.scoringDetails.contractTrack as Record<string, unknown>)[key] !== undefined) return Number((p.scoringDetails.contractTrack as Record<string, unknown>)[key]);
+          if (p.scoringDetails?.applicationTrack && (p.scoringDetails.applicationTrack as Record<string, unknown>)[key] !== undefined) return Number((p.scoringDetails.applicationTrack as Record<string, unknown>)[key]);
+          if (p[key] !== undefined) return Number(p[key]);
         }
         return 0;
       };
@@ -300,14 +300,14 @@ function CompareProjectsContent() {
       if (latest?.createdAt) {
         try {
           lastScanDate = new Date(latest.createdAt).toLocaleString();
-        } catch (e) {
+        } catch {
           lastScanDate = "Invalid Date";
         }
       } else if (p.updatedAt && score > 0) {
         // If we have a score but no scan object, use project update time
         try {
           lastScanDate = new Date(p.updatedAt).toLocaleString();
-        } catch (e) {
+        } catch {
           lastScanDate = "N/A";
         }
       }

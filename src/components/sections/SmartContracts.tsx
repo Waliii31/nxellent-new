@@ -47,8 +47,8 @@ const SmartContracts: React.FC = () => {
   const safeProjects: ProjectResponseDto[] = useMemo(() => {
     if (Array.isArray(projects)) return projects;
     if (projects && typeof projects === "object") {
-      if (Array.isArray((projects as any).data)) return (projects as any).data;
-      if (Array.isArray((projects as any).projects)) return (projects as any).projects;
+      if (Array.isArray((projects as Record<string, unknown>).data)) return (projects as Record<string, unknown>).data as ProjectResponseDto[];
+      if (Array.isArray((projects as Record<string, unknown>).projects)) return (projects as Record<string, unknown>).projects as ProjectResponseDto[];
     }
     return [];
   }, [projects]);
@@ -69,9 +69,36 @@ const SmartContracts: React.FC = () => {
     if (!safeProjects) return [];
 
     return safeProjects
-      .map((p: any) => {
-        // Use direct properties if available (from leaderboard endpoint), fallback to nested structure
-        const score = typeof p.score === 'number' ? p.score : (Number(p.currentScores?.overall?.overall) || 0);
+      .map((p: ProjectResponseDto) => {
+        // Extract score from scoringDetails or currentScores
+        const score = Number(p.scoringDetails?.overall) ||
+          Number(p.currentScores?.overall?.overall) ||
+          Number(p.currentScores?.contract?.overall) ||
+          Number(p.currentScores?.application?.overall) ||
+          0;
+
+        // Determine shield rank from scoringDetails
+        const shieldRank = p.scoringDetails?.shieldRank || "";
+
+        // Use updatedAt or createdAt for last updated
+        const lastUpdated = p.updatedAt || p.createdAt;
+
+        // Contract/Application scores from scoringDetails tracks
+        const contractScore = Number(p.scoringDetails?.contractTrack?.subscore) || 0;
+        const applicationScore = Number(p.scoringDetails?.applicationTrack?.subscore) || 0;
+
+        // Coverage from scoringDetails
+        const coverage = Number(p.scoringDetails?.coverage) || 0;
+
+        // Issue counts from latestContractScan or latestApplicationScan
+        const contractIssues = p.latestContractScan?.issueCounts;
+        const appIssues = p.latestApplicationScan?.issueCounts;
+        const totalIssues = (contractIssues?.total || 0) + (appIssues?.total || 0);
+        const criticalIssues = (contractIssues?.critical || 0) + (appIssues?.critical || 0);
+
+        // Has contract/application based on scan presence
+        const hasContract = !!p.latestContractScan || !!p.scoringDetails?.contractTrack;
+        const hasApplication = !!p.latestApplicationScan || !!p.scoringDetails?.applicationTrack;
 
         return {
           id: p._id || p.id,
@@ -81,19 +108,19 @@ const SmartContracts: React.FC = () => {
           region: "Global",
           visibility: p.visibility === "public" ? "Public" : "Private",
           score,
-          tier: p.shieldRank || tierFromScore(score),
-          timeAgo: timeAgoFrom(p.lastUpdated || p.updatedAt || p.createdAt),
-          timestamp: (p.lastUpdated || p.updatedAt || p.createdAt) ? new Date(p.lastUpdated || p.updatedAt || p.createdAt).getTime() : 0,
+          tier: shieldRank || tierFromScore(score),
+          timeAgo: timeAgoFrom(lastUpdated),
+          timestamp: lastUpdated ? new Date(lastUpdated).getTime() : 0,
 
           // New metrics
-          contractScore: p.contractScore || 0,
-          applicationScore: p.applicationScore || 0,
-          coverage: p.coverage || 0,
-          totalIssues: p.totalIssues || 0,
-          criticalIssues: p.criticalIssues || 0,
-          shieldRank: p.shieldRank,
-          hasContract: p.hasContract,
-          hasApplication: p.hasApplication,
+          contractScore,
+          applicationScore,
+          coverage,
+          totalIssues,
+          criticalIssues,
+          shieldRank: shieldRank || undefined,
+          hasContract,
+          hasApplication,
 
           change: {
             value: 0, // Trend data not yet available in this endpoint
@@ -132,7 +159,7 @@ const SmartContracts: React.FC = () => {
       }
     }
     return list;
-  }, [allRows, chain, category, visibility, time, search]);
+  }, [allRows, chain, category, visibility, time, search, region]);
 
   return (
     <section className="relative w-full text-white py-10 sm:py-14 md:py-16 sm:px-6 lg:px-8">

@@ -22,6 +22,7 @@ import { useProject } from "../hooks/api/useProjects";
 import { useLatestContractScanForProject } from "../hooks/api/useContractScans";
 import { useLatestApplicationScanForProject } from "../hooks/api/useApplicationScans";
 import { type ScanFindingDto } from "../types/scans";
+import { type LatestScanEmbedDto } from "../types/project";
 import { generateProjectPdf } from "../services/scanService";
 
 // -------------------------
@@ -278,33 +279,32 @@ const ProjectDetails: React.FC = () => {
     let latestScan = latestContractScanData || latestApplicationScanData || project.latestContractScan || project.latestApplicationScan;
 
     // Fallback: If no nested scan object, check if the project itself has scan data (flat structure)
-    if (!latestScan && ((project as any).findings || (project as any).issueCounts || (project as any).contractScore || (project as any).applicationScore || (project as any).score)) {
-        const p = project as any;
+    if (!latestScan && (project.findings || project.issueCounts || project.contractScore || project.applicationScore || project.score)) {
         latestScan = {
-            createdAt: p.lastUpdated || p.updatedAt,
-            findings: p.findings || [],
-            issueCounts: p.issueCounts || {
-                total: p.totalIssues || 0,
-                critical: p.criticalIssues || 0,
-                high: p.highIssues || 0,
-                medium: p.mediumIssues || 0,
-                low: p.lowIssues || 0
+            createdAt: (project.lastUpdated as string) || project.updatedAt,
+            findings: (project.findings as Array<Record<string, unknown>>) || [],
+            issueCounts: (project.issueCounts as Record<string, unknown>) || {
+                total: Number(project.totalIssues) || 0,
+                critical: Number(project.criticalIssues) || 0,
+                high: Number(project.highIssues) || 0,
+                medium: Number(project.mediumIssues) || 0,
+                low: Number(project.lowIssues) || 0
             },
-            scores: p.scores || {
-                overall: p.score || 0,
-                contract: { overall: p.contractScore || 0 },
-                application: { overall: p.applicationScore || 0 }
+            scores: (project.scores as Record<string, unknown>) || {
+                overall: Number(project.score) || 0,
+                contract: { overall: Number(project.contractScore) || 0 },
+                application: { overall: Number(project.applicationScore) || 0 }
             },
-            coverage: p.coverage || 0
-        };
+            coverage: Number(project.coverage) || 0
+        } as LatestScanEmbedDto;
     }
 
-    const hasScan = !!latestScan || !!project.scoringDetails?.overall || project.scoringDetails?.latestContractScanId || project.scoringDetails?.latestApplicationScanId;
-    const isContract = !!project.latestContractScan || !!(project as any).contractScore || !!project.scoringDetails?.contractTrack;
+    const hasScan = !!latestScan || !!project.scoringDetails?.overall || !!project.scoringDetails?.latestContractScanId || !!project.scoringDetails?.latestApplicationScanId;
+    const isContract = !!project.latestContractScan || !!project.contractScore || !!project.scoringDetails?.contractTrack;
 
     // Derived Data
     const lastScanDate = latestScan?.createdAt
-        ? new Date(latestScan.createdAt).toLocaleString()
+        ? new Date(latestScan.createdAt as string).toLocaleString()
         : "Never";
 
     // overallScore and rankLabel moved below appScores calculation
@@ -338,16 +338,17 @@ const ProjectDetails: React.FC = () => {
     // Extract findings from contractTrack.categories
     if (contractCategories) {
         Object.entries(contractCategories).forEach(([category, data]) => {
-            const categoryData = data as any;
-            categoryData.findings?.forEach((finding: any) => {
+            const categoryData = data as Record<string, unknown>;
+            (categoryData.findings as unknown[])?.forEach((finding: unknown) => {
+                const f = finding as Record<string, unknown>;
                 findings.push({
-                    id: finding.id,
-                    title: finding.title,
-                    description: `Impact: ${Math.abs(finding.impact)} points`,
-                    severity: (finding.severity?.toLowerCase() || 'low') as any,
+                    id: f.id as string,
+                    title: f.title as string,
+                    description: `Impact: ${Math.abs(f.impact as number)} points`,
+                    severity: ((f.severity as string)?.toLowerCase() as 'low' | 'medium' | 'high' | 'critical') || 'low',
                     category: category,
                     status: 'open',
-                    pointsDeducted: Math.abs(finding.impact || 0),
+                    pointsDeducted: Math.abs((f.impact as number) || 0),
                     evidence: '',
                     recommendation: ''
                 });
@@ -359,16 +360,17 @@ const ProjectDetails: React.FC = () => {
     const applicationCategories = applicationTrack?.categories || {};
     if (applicationCategories) {
         Object.entries(applicationCategories).forEach(([category, data]) => {
-            const categoryData = data as any;
-            categoryData.findings?.forEach((finding: any) => {
+            const categoryData = data as Record<string, unknown>;
+            (categoryData.findings as unknown[])?.forEach((finding: unknown) => {
+                const f = finding as Record<string, unknown>;
                 findings.push({
-                    id: finding.id,
-                    title: finding.title,
-                    description: `Impact: ${Math.abs(finding.impact)} points`,
-                    severity: (finding.severity?.toLowerCase() || 'low') as any,
+                    id: f.id as string,
+                    title: f.title as string,
+                    description: `Impact: ${Math.abs(f.impact as number)} points`,
+                    severity: ((f.severity as string)?.toLowerCase() as 'low' | 'medium' | 'high' | 'critical') || 'low',
                     category: category,
                     status: 'open',
-                    pointsDeducted: Math.abs(finding.impact || 0),
+                    pointsDeducted: Math.abs((f.impact as number) || 0),
                     evidence: '',
                     recommendation: ''
                 });
@@ -423,7 +425,7 @@ const ProjectDetails: React.FC = () => {
     const coverage = scoringDetails?.coverage ?? 0;
 
     // Rank label - prioritize backend shieldRank then fallback to score-based
-    const backendRank = (project.scoringDetails?.shieldRank || latestScan?.shieldRank || "").toLowerCase();
+    const backendRank = (project.scoringDetails?.shieldRank || (latestScan as Record<string, unknown>)?.shieldRank || "").toString().toLowerCase();
     let rankLabel = "";
     if (backendRank.includes("platinum")) rankLabel = "Platinum Shield";
     else if (backendRank.includes("gold")) rankLabel = "Gold Shield";

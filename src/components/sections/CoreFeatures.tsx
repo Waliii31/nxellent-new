@@ -12,14 +12,12 @@ const CoreFeatures: React.FC = () => {
         {/* Heading + paragraph */}
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 md:items-start">
           <h2 className="anybody  text-white text-[32px] sm:text-[40px] md:text-[48px] leading-[42px] sm:leading-14 md:leading-[60px] font-semibold tracking-[-0.00em]">
-            Lorem <br className="hidden sm:block" />
-            Ipsum loderad
+            Why <br className="hidden sm:block" />
+            Nxellent
           </h2>
 
           <p className="alexandria text-white/90 text-[16px] sm:text-[18px] md:text-[20px] leading-[100%] tracking-[-0.02em] max-w-2xl">
-            Scan your code, get a risk score, and know exactly where your
-            vulnerabilities are before attackers find them. Share results, track
-            progress, and improve your system with clarity.
+            Scan your code, receive a clear risk score, and identify exactly where vulnerabilities exist across your smart contracts or applications. Understand severity levels and security gaps before attackers discover weaknesses, exploit them and compromise your system or user trust.
           </p>
         </div>
 

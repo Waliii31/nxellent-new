@@ -27,6 +27,79 @@ export interface ProjectScoresDto {
   overall?: Record<string, unknown>;
 }
 
+// --- Scoring Details types (from backend scoring engine) ---
+
+export interface ScoringCategoryDto {
+  score?: number;
+  findings?: Array<{
+    id?: string;
+    title?: string;
+    severity?: string;
+    impact?: number;
+    [key: string]: unknown;
+  }>;
+  [key: string]: unknown;
+}
+
+export interface ScoringFindingsCountDto {
+  total?: number;
+  critical?: number;
+  high?: number;
+  medium?: number;
+  low?: number;
+}
+
+export interface ScoringTrackDto {
+  subscore?: number;
+  categories?: Record<string, ScoringCategoryDto>;
+  findingsCount?: ScoringFindingsCountDto;
+  [key: string]: unknown;
+}
+
+export interface ScoringDetailsDto {
+  overall?: number;
+  coverage?: number;
+  shieldRank?: string;
+  calculatedAt?: string;
+  contractTrack?: ScoringTrackDto;
+  applicationTrack?: ScoringTrackDto;
+  latestContractScanId?: string;
+  latestApplicationScanId?: string;
+  [key: string]: unknown;
+}
+
+// --- Embedded latest scan data (partial scan data embedded in project response) ---
+
+export interface LatestScanEmbedDto {
+  _id?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  scores?: {
+    overall?: number;
+    [key: string]: unknown;
+  };
+  issueCounts?: {
+    total?: number;
+    critical?: number;
+    high?: number;
+    medium?: number;
+    low?: number;
+  };
+  findings?: Array<Record<string, unknown>>;
+  coverage?: number;
+  blockchain?: string;
+  framework?: string;
+  scanStatus?: {
+    status?: string;
+    startedAt?: string;
+    completedAt?: string;
+    errorMessage?: string;
+  };
+  shieldRank?: string;
+  project?: string | Record<string, unknown>;
+  [key: string]: unknown;
+}
+
 export interface ProjectResponseDto {
   _id?: string;
   id: string;
@@ -38,12 +111,14 @@ export interface ProjectResponseDto {
   teamMembers: TeamMemberDto[];
   visibility: ProjectVisibility;
   currentScores: ProjectScoresDto;
-  latestContractScan?: any | null; // Scan data included by backend
-  latestApplicationScan?: any | null; // Scan data included by backend
-  scoringDetails?: any; // Scoring details from backend
+  latestContractScan?: LatestScanEmbedDto | null;
+  latestApplicationScan?: LatestScanEmbedDto | null;
+  scoringDetails?: ScoringDetailsDto;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  // Index signature to allow safe casting to Record<string, unknown>
+  [key: string]: unknown;
 }
 
 export interface CreateProjectDto {

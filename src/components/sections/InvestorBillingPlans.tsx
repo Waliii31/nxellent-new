@@ -128,8 +128,9 @@ const BillingCard: React.FC<BillingCardProps> = ({
             } else {
                 alert("Failed to create checkout session. Please try again.");
             }
-        } catch (error: any) {
-            const errorMessage = error?.response?.data?.message || error?.response?.data?.error || "Unknown error";
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string; error?: string } } };
+            const errorMessage = err?.response?.data?.message || err?.response?.data?.error || "Unknown error";
             alert(`Failed to create checkout session: ${errorMessage}\n\nPlease contact support if this persists.`);
         } finally {
             setSubmitting(false);

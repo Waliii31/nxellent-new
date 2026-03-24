@@ -220,11 +220,11 @@ const Scanner: React.FC = () => {
       try {
         // Extract repo name from GitHub URL
         // Supports: https://github.com/user/repo, https://github.com/user/repo.git, github.com/user/repo
-        const match = trimmedUrl.match(/github\.com\/[^\/]+\/([^\/\.]+)/);
+        const match = trimmedUrl.match(new RegExp("github\\.com/[^/]+/([^/.]+)"));
         if (match && match[1]) {
           return match[1].replace(/[_-]/g, " ");
         }
-      } catch (e) {
+      } catch {
         // If parsing fails, return empty string
       }
     }
@@ -256,10 +256,11 @@ const Scanner: React.FC = () => {
         setRepoUrl("");
         setSuccess("Repository uploaded successfully.");
       },
-      onError: (error: any) => {
+      onError: (error: unknown) => {
+        const err = error as { response?: { data?: { message?: string } }; message?: string };
         const msg =
-          error?.response?.data?.message ||
-          error?.message ||
+          err?.response?.data?.message ||
+          err?.message ||
           "Upload failed. Please try again.";
         setError(msg);
       },
@@ -316,8 +317,9 @@ const Scanner: React.FC = () => {
           setSuccess("Scan started for existing project. Redirecting...");
           setTimeout(() => navigate(`/projects/${attachToProjectId}`), 1500);
         },
-        onError: (error: any) => {
-          const msg = error?.response?.data?.message || error?.message || "Failed to initiate scan.";
+        onError: (error: unknown) => {
+          const err = error as { response?: { data?: { message?: string } }; message?: string };
+          const msg = err?.response?.data?.message || err?.message || "Failed to initiate scan.";
           setError(msg);
           if (msg.toLowerCase().includes('scan') && (msg.toLowerCase().includes('upgrade') || msg.toLowerCase().includes('used all') || msg.toLowerCase().includes('no remaining'))) {
             setShowUpgradeButton(true);
@@ -366,8 +368,9 @@ const Scanner: React.FC = () => {
           navigate("/projects/my-projects");
         }, 1500);
       },
-      onError: (error: any) => {
-        const msg = error?.response?.data?.message || error?.message || "Failed to initiate scan.";
+      onError: (error: unknown) => {
+        const err = error as { response?: { data?: { message?: string } }; message?: string };
+        const msg = err?.response?.data?.message || err?.message || "Failed to initiate scan.";
         setError(msg);
         setShowModal(false);
         // Show upgrade button if error is about scan limits

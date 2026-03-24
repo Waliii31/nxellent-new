@@ -20,19 +20,19 @@ const SharedProjectCard: React.FC = () => {
 
     // Dynamic data extraction from scoringDetails
     const sd = project?.scoringDetails || {};
-    const overallScore = Number(sd.overall) || Number((project as any)?.score) || 0;
+    const overallScore = Number(sd.overall) || Number(project?.score) || 0;
 
     // Track scores extraction - use 'subscore' from scoringDetails as per backend API
     const contractScore = Number(sd.contractTrack?.subscore) ||
         Number(project?.latestContractScan?.scores?.overall) ||
-        Number((project as any)?.contractScore) || 0;
+        Number(project?.contractScore) || 0;
 
     const applicationScore = Number(sd.applicationTrack?.subscore) ||
         Number(project?.latestApplicationScan?.scores?.overall) ||
-        Number((project as any)?.applicationScore) || 0;
+        Number(project?.applicationScore) || 0;
 
     // Rank label extraction
-    const backendRank = (sd.shieldRank || (project as any)?.shieldRank || "").toLowerCase();
+    const backendRank = (sd.shieldRank || String(project?.shieldRank || "")).toLowerCase();
     let rankLabel = "";
     if (backendRank.includes("platinum")) rankLabel = "Platinum Shield";
     else if (backendRank.includes("gold")) rankLabel = "Gold Shield";

@@ -32,7 +32,7 @@ const Pricing = () => {
       if (response?.checkoutUrl) {
         window.location.href = response.checkoutUrl;
       }
-    } catch (error) {
+    } catch {
       // Failed to initiate buy scan
     }
   };

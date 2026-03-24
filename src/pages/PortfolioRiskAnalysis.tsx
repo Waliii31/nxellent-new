@@ -60,10 +60,11 @@ const getRiskColors = (risk: string) => {
 }
 
 // Determine project type/track from project data
-const getProjectTrack = (project: any): string => {
-  if (project.latestContractScan && project.latestApplicationScan) return "Both"
-  if (project.latestContractScan) return "Contract"
-  if (project.latestApplicationScan) return "Application"
+const getProjectTrack = (project: unknown): string => {
+  const p = project as Record<string, unknown>;
+  if (p.latestContractScan && p.latestApplicationScan) return "Both"
+  if (p.latestContractScan) return "Contract"
+  if (p.latestApplicationScan) return "Application"
   return "Pending"
 }
 
@@ -80,7 +81,7 @@ const PortfolioRiskAnalysis = () => {
     if (!projects) return []
 
     return projects.map((p) => {
-      const score = p.scoringDetails?.overall || 0
+      const score = Number(p.scoringDetails?.overall) || 0
       const risk = getRiskLevel(score)
       const colors = getRiskColors(risk)
       const track = getProjectTrack(p)

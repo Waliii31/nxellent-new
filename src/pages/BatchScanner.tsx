@@ -55,7 +55,7 @@ export default function BatchScanner() {
         setItems((prev) => prev.filter((i) => i.id !== id));
     };
 
-    const updateItem = (id: number, field: keyof BatchItem, value: any) => {
+    const updateItem = (id: number, field: keyof BatchItem, value: unknown) => {
         setItems((prev) =>
             prev.map((i) => (i.id === id ? { ...i, [field]: value } : i))
         );
@@ -85,7 +85,7 @@ export default function BatchScanner() {
 
                 // Extract project name from URL
                 let projectName = "Batch Project";
-                const match = trimmedUrl.match(/github\.com\/[^\/]+\/([^\/\.]+)/);
+                const match = trimmedUrl.match(new RegExp("github\\.com/[^/]+/([^/.]+)"));
                 if (match && match[1]) {
                     projectName = match[1].replace(/[_-]/g, " ");
                 }
@@ -110,8 +110,9 @@ export default function BatchScanner() {
                 navigate("/projects/my-projects");
             }, 2000);
 
-        } catch (e: any) {
-            setError(e?.response?.data?.message || e.message || "An unexpected error occurred during batch processing.");
+        } catch (e: unknown) {
+            const err = e as { response?: { data?: { message?: string } }; message?: string };
+            setError(err?.response?.data?.message || err.message || "An unexpected error occurred during batch processing.");
             setIsSubmitting(false);
         }
     };
@@ -246,7 +247,7 @@ export default function BatchScanner() {
                                     <select
                                         value={item.type}
                                         onChange={(e) => updateItem(item.id, "type", e.target.value as ScanType)}
-                                        className="w-full md:w-auto appearance-none bg-[#0B0730] border border-[#3B2A5E] text-white px-4 py-3 pr-10 rounded-lg outline-none focus:border-[#A855F7] cursor-pointer min-w-[160px] text-sm"
+                                        className="w-full md:w-auto appearance-none bg-[#0B0730] border border-[#3B2A5E] text-white px-4 py-3 pr-10 rounded-lg outline-none focus:border-[#A855F7] cursor-pointer min-w-40 text-sm"
                                     >
                                         <option value="Contract Scan">Contract Scan</option>
                                         <option value="App Scan">App Scan</option>

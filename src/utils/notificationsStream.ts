@@ -3,7 +3,7 @@ import { API_BASE } from "../services/api";
 
 export function createNotificationsStream(
   token: string,
-  onMessage: (data: any) => void
+  onMessage: (data: unknown) => void
 ) {
   const url = new URL("/notifications/stream", API_BASE);
   url.searchParams.set("token", token);

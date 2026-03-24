@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { register, startGithubOAuth } from "../services/authService";
 import { useAppDispatch } from "../app/store";
 import { setCredentials } from "../features/auth/authSlice";
-import type { AuthResponseDto } from "../types/auth";
+import type { AuthResponseDto, RegisterDto } from "../types/auth";
 
 const SignUp = () => {
   const [showPwd, setShowPwd] = useState(false);
@@ -25,14 +25,15 @@ const SignUp = () => {
     (location.state as { from?: string } | undefined)?.from ||
     "/projects/my-projects";
 
-  const mutation = useMutation<AuthResponseDto, unknown, any>({
+  const mutation = useMutation<AuthResponseDto, unknown, RegisterDto>({
     mutationFn: (payload) => register(payload),
     onSuccess(data) {
       dispatch(setCredentials(data));
       navigate(from, { replace: true });
     },
-    onError(err: any) {
-      setError(err?.response?.data?.message || "Registration failed");
+    onError(err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error?.response?.data?.message || "Registration failed");
     },
   });
 

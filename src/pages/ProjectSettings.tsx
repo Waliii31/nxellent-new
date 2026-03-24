@@ -62,9 +62,10 @@ export default function ProjectSettings(): React.ReactElement {
         onSuccess: () => {
           setSaveSuccess("Changes saved.");
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
+          const error = err as { response?: { data?: { message?: string } } };
           setSaveError(
-            err?.response?.data?.message || "Failed to save changes."
+            error?.response?.data?.message || "Failed to save changes."
           );
         },
       }
@@ -83,12 +84,12 @@ export default function ProjectSettings(): React.ReactElement {
         onSuccess: () => {
           setSaveSuccess(`Invited ${email} as ${role}`);
         },
-        onError: (err: any) => {
-
+        onError: (err: unknown) => {
+          const error = err as { response?: { data?: { message?: string; error?: string } }; message?: string };
           const errorMessage =
-            err?.response?.data?.message ||
-            err?.response?.data?.error ||
-            err?.message ||
+            error?.response?.data?.message ||
+            error?.response?.data?.error ||
+            error?.message ||
             "Failed to invite team member. The backend returned an error.";
 
           setSaveError(errorMessage);
@@ -109,9 +110,10 @@ export default function ProjectSettings(): React.ReactElement {
         onSuccess: () => {
           setSaveSuccess("Team member removed.");
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
+          const error = err as { response?: { data?: { message?: string } } };
           setSaveError(
-            err?.response?.data?.message || "Failed to remove team member."
+            error?.response?.data?.message || "Failed to remove team member."
           );
         },
       }

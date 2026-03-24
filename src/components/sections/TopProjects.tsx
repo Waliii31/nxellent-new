@@ -45,7 +45,7 @@ const TopProjects: React.FC = () => {
     // Handle potentially wrapped response
     const projectList = Array.isArray(projects)
       ? projects
-      : (projects as any).data || (projects as any).projects || (projects as any).leaderboard || [];
+      : (projects as Record<string, unknown>).data || (projects as Record<string, unknown>).projects || (projects as Record<string, unknown>).leaderboard || [];
 
     if (!Array.isArray(projectList)) {
       console.warn("TopProjects: Expected array but got:", projects);

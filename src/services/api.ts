@@ -13,9 +13,10 @@ export const api = axios.create({
 
 // Attach Authorization header from Redux/localStorage before every request
 api.interceptors.request.use((config) => {
-  const state = store.getState() as any;
+  const state = store.getState() as unknown;
+  const s = state as { auth?: { token?: string } };
   const token =
-    state.auth?.token ||
+    s.auth?.token ||
     localStorage.getItem("nxellent_access_token") ||
     localStorage.getItem("nx_token");
 

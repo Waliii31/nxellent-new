@@ -50,7 +50,7 @@ export default function InviteInline({ onInvite }: InviteInlineProps) {
           <button
             onClick={handleInvite}
             disabled={!email.trim()}
-            className="jakarta h-12 rounded-[72px] px-6 sm:px-8 bg-linear-to-r from-[#FFC857] via-[#FF8A3C] via-[#FF3EC4] to-[#FF0040] text-[#333333] text-sm font-medium font-plus-jakarta-sans shrink-0 transition-all duration-300 hover:opacity-90 hover:shadow-[0_0_10px_rgba(255,0,64,0.35)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
+            className="jakarta h-12 rounded-[72px] px-6 sm:px-8 bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] text-sm font-medium font-plus-jakarta-sans shrink-0 transition-all duration-300 hover:opacity-90 hover:shadow-[0_0_10px_rgba(255,0,64,0.35)] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none"
           >
             Invite
           </button>

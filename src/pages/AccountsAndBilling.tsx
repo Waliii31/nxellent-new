@@ -14,7 +14,7 @@ const AccountsAndBilling: React.FC = () => {
 
   const location = useLocation();
   const initialBillingType: BillingType =
-    (location.state as any)?.billingType === "investor"
+    (location.state as Record<string, unknown>)?.billingType === "investor"
       ? "investor"
       : "founder";
 

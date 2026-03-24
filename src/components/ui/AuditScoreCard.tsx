@@ -1,15 +1,16 @@
 import { ArrowRight, Shield, AlertCircle, CheckCircle2, Clock, Scan } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import type { LatestScanEmbedDto, ScoringDetailsDto } from "../../types/project";
 
 
 type AuditScoreCardProps = {
   protocolName?: string;
   visibility?: "private" | "public";
   projectId?: string;
-  latestContractScan?: any | null;
-  latestApplicationScan?: any | null;
-  scoringDetails?: any;
+  latestContractScan?: LatestScanEmbedDto | null;
+  latestApplicationScan?: LatestScanEmbedDto | null;
+  scoringDetails?: ScoringDetailsDto;
   isLoading?: boolean;
 };
 
@@ -127,7 +128,7 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
           </div>
           <h3 className="anybody text-xl font-bold text-white mb-2">{protocolName}</h3>
           <p className="text-red-400 text-sm font-semibold mb-1">Scan Partially Failed or Cancelled</p>
-          <p className="text-white/60 text-xs mb-6 max-w-[240px] mx-auto">
+          <p className="text-white/60 text-xs mb-6 max-w-60 mx-auto">
             The security analysis could not be completed for this project.
           </p>
           <button

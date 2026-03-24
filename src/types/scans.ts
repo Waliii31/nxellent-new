@@ -99,7 +99,7 @@ export interface DependencyAnalysisDto {
 }
 
 export interface RuntimeProbingAnalysisDto {
-  probes: any[]; // Using any for now as structure differs slightly
+  probes: unknown[]; // Using unknown for now as structure differs slightly
   summary: ApplicationScanIssueCountsDto;
 }
 
