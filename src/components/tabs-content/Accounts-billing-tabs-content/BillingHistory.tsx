@@ -1,6 +1,6 @@
 import { Download } from "lucide-react";
 import SecondaryButton from "../../ui/SecondaryButton";
-import { useBillingStatus } from "../../../hooks/api/useBilling";
+import { useBillingStatus, useGetInvoices } from "../../../hooks/api/useBilling";
 
 type InvoiceLike = {
   id?: string;
@@ -70,18 +70,9 @@ export const BillingCard = ({
 
 const BillingHistory = () => {
   const { data, isLoading, isError } = useBillingStatus();
+  const { data: invoiceData, isLoading: isLoadingInvoices } = useGetInvoices();
 
-  // Mock invoices for now as they are not in the API yet
-  const invoices: InvoiceLike[] = [
-    {
-      id: "inv_1",
-      description: "Pro Plan Subscription",
-      amount: 49.00,
-      status: "Paid",
-      date: new Date().toISOString(),
-      downloadUrl: "#",
-    }
-  ];
+  const invoices: InvoiceLike[] = invoiceData?.invoices || [];
 
   const remaining = data?.remainingScans ?? 0;
   const total = data?.totalScans ?? 0;
@@ -158,7 +149,8 @@ const BillingHistory = () => {
         </div>
 
         <div className="flex flex-col mt-5 sm:mt-6 md:mt-8 justify-center items-stretch gap-3 w-full">
-          {invoices.length === 0 && !isLoading && (
+          {isLoadingInvoices && <p className="alexandria text-sm text-white/70">Loading invoices...</p>}
+          {!isLoadingInvoices && invoices.length === 0 && (
             <p className="alexandria text-sm text-white/70">No invoices available yet.</p>
           )}
           {invoices.map((invoice) => (

@@ -38,7 +38,6 @@ export const useLeaderboardProjects = () =>
 export const useMyProjects = () =>
   useQuery<ProjectResponseDto[]>({
     queryKey: ["my-projects"],
-    refetchInterval: 5000, // Poll every 5 seconds to catch scan completions
     queryFn: () =>
       api.get<ProjectResponseDto[]>("/projects").then((r) =>
         r.data.map(p => ({

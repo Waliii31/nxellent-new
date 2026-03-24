@@ -1,0 +1,66 @@
+name: frontend-deploy-vm
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  deploy_self_hosted:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy on VM (build local image + restart)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Prefer VM_APP_DIR secret, but fall back to /opt/nxellent if unset
+          # or not writable by the runner user.
+          APP_DIR="${{ secrets.VM_APP_DIR }}"
+          if [ -z "${APP_DIR:-}" ]; then
+            APP_DIR="/opt/nxellent"
+          fi
+
+          PARENT_DIR="$(dirname "$APP_DIR")"
+          if [ ! -d "$APP_DIR" ] && [ ! -w "$PARENT_DIR" ]; then
+            echo "Configured APP_DIR is not writable: $APP_DIR"
+            echo "Falling back to /opt/nxellent"
+            APP_DIR="/opt/nxellent"
+          fi
+
+          mkdir -p "$APP_DIR"
+          if [ ! -w "$APP_DIR" ]; then
+            echo "Deploy directory is not writable by runner user: $APP_DIR"
+            echo "Trying fallback /opt/nxellent"
+            APP_DIR="/opt/nxellent"
+            mkdir -p "$APP_DIR"
+            if [ ! -w "$APP_DIR" ]; then
+              echo "Fallback directory is also not writable: $APP_DIR"
+              exit 1
+            fi
+          fi
+
+          # Sync source to the deploy directory
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='dist' \
+            "$GITHUB_WORKSPACE/" "$APP_DIR/nxellent-frontend/"
+
+          # Build the frontend image locally on the VM
+          docker build \
+            -t nxellent-frontend:local \
+            --build-arg VITE_API_URL=https://api.nxellent.com \
+            -f "$APP_DIR/nxellent-frontend/Dockerfile" \
+            "$APP_DIR/nxellent-frontend"
+
+          # Restart only the frontend service
+          cd "$APP_DIR"
+          docker compose -f docker-compose.vm.yml up -d --no-deps --force-recreate frontend
+          docker compose -f docker-compose.vm.yml ps frontend

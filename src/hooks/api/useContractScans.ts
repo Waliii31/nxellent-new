@@ -34,7 +34,6 @@ export const useLatestContractScanForProject = (projectId?: string) =>
   useQuery<ContractScanResponseDto | null>({
     queryKey: ["contract-scans-project-latest", projectId],
     enabled: !!projectId,
-    refetchInterval: 5000, // Refetch every 5 seconds
     retry: false, // Don't retry on error
     refetchOnWindowFocus: true,
     queryFn: async () => {

@@ -39,7 +39,6 @@ export const useNotifications = (
     enabled: options?.enabled ?? true,
     retry: 1,
     refetchOnWindowFocus: false,
-    refetchInterval: options?.refetchInterval,
     staleTime: options?.staleTime,
     refetchOnMount: options?.refetchOnMount,
   });

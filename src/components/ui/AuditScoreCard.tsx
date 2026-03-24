@@ -1,8 +1,7 @@
 import { ArrowRight, Shield, AlertCircle, CheckCircle2, Clock, Scan } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLatestContractScanForProject } from "../../hooks/api/useContractScans";
-import { useLatestApplicationScanForProject } from "../../hooks/api/useApplicationScans";
+
 
 type AuditScoreCardProps = {
   protocolName?: string;
@@ -27,18 +26,13 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
 
   // Determine which scan to display (prefer contract, fallback to application)
   // const primaryScan = latestContractScan || latestApplicationScan; // MOVED DOWN
-  const scanType = latestContractScan ? "Contract" : latestApplicationScan ? "Application" : "No Scan";
+  const scanType = (latestContractScan && latestApplicationScan) ? "Full-Stack" : latestContractScan ? "Contract" : latestApplicationScan ? "Application" : "No Scan";
 
 
-  // Conditionally poll if we have a project ID
-  const { data: polledContractScan } = useLatestContractScanForProject(projectId);
-  const { data: polledAppScan } = useLatestApplicationScanForProject(projectId);
+  // Use props directly instead of polling
+  const currentContractScan = latestContractScan;
+  const currentAppScan = latestApplicationScan;
 
-  // Merge polled data if available, effectively allowing "auto-update"
-  const currentContractScan = polledContractScan !== undefined ? polledContractScan : latestContractScan;
-  const currentAppScan = polledAppScan !== undefined ? polledAppScan : latestApplicationScan;
-
-  // Re-determine primary scan with potential new data
   const primaryScan = currentContractScan || currentAppScan;
   const scanStatus = primaryScan?.scanStatus?.status;
 

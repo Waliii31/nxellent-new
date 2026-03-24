@@ -20,6 +20,8 @@ type Plan = {
 
 type CardProps = Omit<Plan, "popular"> & {
     isSelected: boolean;
+    planKey: PlanKey;
+    currentPlanKey: PlanKey;
 };
 
 const plans: Plan[] = [
@@ -85,16 +87,13 @@ const BillingCard: React.FC<CardProps> = ({
     icon,
     features,
     isSelected,
+    planKey,
+    currentPlanKey,
 }) => {
     const createCheckout = useCreateSubscriptionCheckout();
     const [submitting, setSubmitting] = useState(false);
 
-    const planCheckoutId =
-        title.toLowerCase() === "pro"
-            ? "pro"
-            : title.toLowerCase() === "starter"
-                ? "starter"
-                : "free";
+    const planCheckoutId = planKey;
 
     const startCheckout = async () => {
         if (isSelected) return;
@@ -108,11 +107,18 @@ const BillingCard: React.FC<CardProps> = ({
             if (res?.checkoutUrl) {
                 window.location.href = res.checkoutUrl;
             } else {
+                // If backend returns just the success URL directly (for free plan downgrade), redirect there
+                // The backward compat fix in backend returns `checkoutUrl: successUrl` effectively if it's a redirect string
+                // But better to check.
+                if (typeof res === 'string') {
+                    window.location.href = res;
+                    return;
+                }
                 alert("Failed to create checkout session. Please try again.");
             }
         } catch (error: any) {
             const errorMessage = error?.response?.data?.message || error?.response?.data?.error || "Unknown error";
-            alert(`Failed to create checkout session: ${errorMessage}\n\nPlease contact support if this persists.`);
+            alert(`Failed to update plan: ${errorMessage}\n\nPlease contact support if this persists.`);
         } finally {
             setSubmitting(false);
         }
@@ -137,13 +143,19 @@ const BillingCard: React.FC<CardProps> = ({
                 </PrimaryButton>
             );
         }
+
+        const ranks: Record<string, number> = { free: 0, starter: 1, pro: 2 };
+        const currentRank = ranks[currentPlanKey] ?? 0;
+        const thisRank = ranks[planKey] ?? 0;
+        const label = thisRank < currentRank ? "Downgrade" : "Upgrade";
+
         return (
             <SecondaryButton
                 moreClasses="w-full"
                 disabled={submitting}
                 onClick={startCheckout}
             >
-                {submitting ? "Redirecting…" : "Upgrade"}
+                {submitting ? "Processing…" : label}
             </SecondaryButton>
         );
     };
@@ -231,9 +243,12 @@ const FoundersBillingPlans: React.FC<FoundersBillingPlansProps> = ({
                             key={key}
                             {...rest}
                             isSelected={key === selectedKey}
+                            planKey={key}
+                            currentPlanKey={selectedKey}
                         />
                     ))}
                 </div>
+
             </ScrollReveal>
         </section>
     );

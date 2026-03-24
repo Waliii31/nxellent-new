@@ -1,6 +1,10 @@
 // src/components/tabs-content/Accounts-billing-tabs-content/Subscription.tsx
 import { useMemo } from "react";
-import { useSubscriptionStatus } from "../../../hooks/api/useSubscription";
+import toast from "react-hot-toast";
+import {
+  useSubscriptionStatus,
+  useSubscriptionCancel,
+} from "../../../hooks/api/useSubscription";
 import FoundersBillingPlans from "../../sections/FoundersBillingPlans";
 import InvestorBillingPlans from "../../sections/InvestorBillingPlans";
 
@@ -29,6 +33,25 @@ type SubscriptionProps = {
 
 const Subscription: React.FC<SubscriptionProps> = ({ billingType = "founder" }) => {
   const { data, isLoading, isError } = useSubscriptionStatus();
+  const { mutate: cancelSubscription, isPending: isCancelling } =
+    useSubscriptionCancel();
+
+  const handleCancelSubscription = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to cancel your subscription? You will lose access to premium features at the end of your billing period."
+      )
+    ) {
+      cancelSubscription(undefined, {
+        onSuccess: () => {
+          toast.success("Subscription cancelled successfully");
+        },
+        onError: () => {
+          toast.error("Failed to cancel subscription");
+        },
+      });
+    }
+  };
 
   const usage = useMemo(() => {
     const total = data?.totalScans ?? 0;
@@ -103,13 +126,24 @@ const Subscription: React.FC<SubscriptionProps> = ({ billingType = "founder" }) 
               })()}
             </p>
             <p className="alexandria inter text-white/80 text-base sm:text-lg font-medium my-1">
-              Next billing: {data?.renewsAt ? formatDate(data.renewsAt) : "Not scheduled"}
+              {data?.cancelAtPeriodEnd
+                ? `Expires on: ${formatDate(data.cancelAtPeriodEnd)}`
+                : `Next billing: ${data?.renewsAt ? formatDate(data.renewsAt) : "Not scheduled"
+                }`}
             </p>
           </div>
           <button className="jakarta bg-[#FD7EFF] text-[#090123] font-semibold text-xs sm:text-sm py-2 px-4 rounded-full self-start sm:self-auto">
-            {isLoading ? "Checking…" : data ? "Active" : "Unavailable"}
+            {isLoading
+              ? "Checking…"
+              : !data
+                ? "Unavailable"
+                : data.cancelAtPeriodEnd
+                  ? "Expiring"
+                  : data.status.charAt(0).toUpperCase() + data.status.slice(1)}
           </button>
         </div>
+
+
 
         <hr className="h-0.5 my-4 w-full border-0 bg-linear-to-r from-[#BE0178] to-[#E830E8]" />
 
@@ -129,6 +163,21 @@ const Subscription: React.FC<SubscriptionProps> = ({ billingType = "founder" }) 
             {isLoading ? "…" : data?.plan?.toLowerCase() === "pro" ? "Unlimited" : usage.remaining}
           </p>
         </div>
+
+        {data?.plan &&
+          data.plan !== "free" &&
+          data.status === "active" &&
+          !data.cancelAtPeriodEnd && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={handleCancelSubscription}
+                disabled={isCancelling}
+                className="text-red-400 text-sm hover:text-red-300 transition-colors disabled:opacity-50 underline decoration-red-400/50 hover:decoration-red-300"
+              >
+                {isCancelling ? "Cancelling..." : "Cancel Subscription"}
+              </button>
+            </div>
+          )}
       </div>
 
       {/* ↓↓↓ Billing grids ↓↓↓ */}

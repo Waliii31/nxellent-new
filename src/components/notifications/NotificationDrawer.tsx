@@ -68,6 +68,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
   const deleteAll = useDeleteAllNotifications();
   const deleteOne = useDeleteNotification();
 
+
   useEffect(() => {
     if (!token) return;
 
@@ -150,6 +151,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
 
 
 
+
   const unreadCount = unreadData?.count ?? 0;
 
   return (
@@ -174,7 +176,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Gradient Border Left Edge */}
-            <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-linear-to-brom-[#D467B9] via-[#5FA8FF] to-[#D467B9]" />
+            <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-brom-[#D467B9] via-[#5FA8FF] to-[#D467B9]" />
 
             {/* Header */}
             <div className="relative px-6 py-6 border-b border-white/10">
@@ -331,14 +333,14 @@ export default function NotificationDrawer({ open, onClose }: Props) {
                   >
                     {/* Gradient Border Wrapper */}
                     <div
-                      className={`rounded-2xl p-px transition-all duration-300 ${n.read
+                      className={`rounded - 2xl p - px transition - all duration - 300 ${n.read
                         ? "bg-white/10"
                         : "bg-linear-to-br from-[#D467B9]/50 via-[#5FA8FF]/50 to-[#D467B9]/50"
-                        }`}
+                        } `}
                     >
                       <div
-                        className={`rounded-2xl p-4 bg-[#0d0b1d] backdrop-blur-sm flex flex-col gap-3 transition-all duration-300 ${n.read ? "opacity-60" : ""
-                          }`}
+                        className={`rounded - 2xl p - 4 bg - [#0d0b1d] backdrop - blur - sm flex - col gap - 3 transition - all duration - 300 ${n.read ? "opacity-60" : ""
+                          } `}
                       >
                         {/* Header Row */}
                         <div className="flex items-start justify-between gap-3">

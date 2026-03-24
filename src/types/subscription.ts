@@ -6,6 +6,8 @@ export interface SubscriptionStatusDto {
   remainingScans: number;
   totalScans: number;
   renewsAt?: string;
+  cancelAtPeriodEnd?: string;
+  currentPeriodEnd?: string;
 }
 
 export interface FeatureAccessDto {
