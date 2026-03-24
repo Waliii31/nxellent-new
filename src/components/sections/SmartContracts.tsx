@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Search, Trophy, FileText, Code } from "lucide-react";
+import { Search, Trophy, FileText, Code, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLeaderboardProjects } from "../../hooks/api/useProjects";
 import type { ProjectResponseDto } from "../../types/project";
 
 import ProjectRow from "../ui/ProjectRow";
 import gauge from "/guage.png";
 import arrowUp from "/profit.svg";
+import KPIStatsBar from "../ui/KPIStatsBar";
 
 
 
@@ -37,21 +38,60 @@ const SmartContracts: React.FC = () => {
   const [sortHighLow, setSortHighLow] = useState(true);
   const liveUpdates = false; // Live updates feature disabled
 
+  // Pagination new states
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+  const [jumpTo, setJumpTo] = useState("");
+
   const {
-    data: projects,
+    data: projectsData,
     isLoading: loadingProjects,
     isError: projectsError,
     refetch: refetchProjects,
-  } = useLeaderboardProjects();
+  } = useLeaderboardProjects(page, limit);
 
   const safeProjects: ProjectResponseDto[] = useMemo(() => {
-    if (Array.isArray(projects)) return projects;
-    if (projects && typeof projects === "object") {
-      if (Array.isArray((projects as Record<string, unknown>).data)) return (projects as Record<string, unknown>).data as ProjectResponseDto[];
-      if (Array.isArray((projects as Record<string, unknown>).projects)) return (projects as Record<string, unknown>).projects as ProjectResponseDto[];
+    let result: any[] = [];
+    if (Array.isArray(projectsData)) result = [...projectsData];
+    else if (projectsData && typeof projectsData === "object") {
+      if (Array.isArray((projectsData as any).data)) result = [...(projectsData as any).data];
+      else if (Array.isArray((projectsData as any).projects)) result = [...(projectsData as any).projects];
     }
-    return [];
-  }, [projects]);
+
+    // Populate demo project up to 50 items for testing
+    if (!loadingProjects && result.length < 50) {
+      if (result.length > 0) {
+        const demoCount = 50 - result.length;
+        const template = result[0];
+        for (let i = 0; i < demoCount; i++) {
+          result.push({
+            ...template,
+            id: `demo-${i}`,
+            _id: `demo-${i}`,
+            name: `${template.name || 'Demo Project'} (Demo ${i + 1})`,
+          });
+        }
+      } else {
+        for (let i = 0; i < 50; i++) {
+          result.push({
+            id: `demo-empty-${i}`,
+            _id: `demo-empty-${i}`,
+            name: `Simulated Project #${i + 1}`,
+            type: i % 2 === 0 ? "app" : "defi",
+            visibility: "public",
+            score: 75 + (i % 20),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          });
+        }
+      }
+    }
+
+    return result as ProjectResponseDto[];
+  }, [projectsData, loadingProjects]);
+
+  // If the backend returns flat arrays instead of pagination payloads, slice locally.
+  // Extracted later to actualTotalPages after evaluating filtered list.
 
   useEffect(() => {
     if (!liveUpdates) return;
@@ -161,6 +201,16 @@ const SmartContracts: React.FC = () => {
     return list;
   }, [allRows, chain, category, visibility, time, search, region]);
 
+  const paginatedProjects = useMemo(() => {
+    // Let backend pagination handle it, or slice locally if backend returned flat list
+    if (projectsData?.meta?.page !== undefined && projectsData?.data?.length <= limit) {
+      return filteredProjects; // It's already subset
+    }
+    return filteredProjects.slice((page - 1) * limit, page * limit);
+  }, [filteredProjects, page, limit, projectsData]);
+
+  const actualTotalPages = Math.max(1, projectsData?.meta?.totalPages || projectsData?.totalPages || Math.ceil(filteredProjects.length / limit));
+
   return (
     <section className="relative w-full text-white py-10 sm:py-14 md:py-16 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto w-full">
@@ -224,6 +274,10 @@ const SmartContracts: React.FC = () => {
           </div>
         </div>
 
+        <div className="max-w-7xl mx-auto mb-4 px-3 sm:px-0">
+          <KPIStatsBar />
+        </div>
+
         {projectsError && (
           <p className="text-red-300 text-sm mb-4">Failed to load leaderboard. Please try again.</p>
         )}
@@ -232,10 +286,10 @@ const SmartContracts: React.FC = () => {
           {(loadingProjects) && (
             <p className="text-white/70 text-sm">Loading leaderboard…</p>
           )}
-          {!loadingProjects && filteredProjects.length === 0 && (
+          {!loadingProjects && paginatedProjects.length === 0 && (
             <p className="text-white/70 text-sm">No projects match your filters yet.</p>
           )}
-          {filteredProjects.map((p) => (
+          {paginatedProjects.map((p) => (
             <ProjectRow
               key={`${p.name}-${p.rank}`}
               rank={p.rank}
@@ -258,6 +312,121 @@ const SmartContracts: React.FC = () => {
             />
           ))}
         </div>
+
+        {/* Load More & Pagination Section */}
+        {filteredProjects.length > 0 && (
+          <div className="mt-10 flex flex-col items-center gap-8 w-full max-w-4xl mx-auto px-2">
+            
+            {/* Load More Projects */}
+            {filteredProjects.length > limit && limit < 12 && (
+              <button
+                onClick={() => setLimit((l) => l + 4)}
+                className="flex items-center gap-2 px-8 py-3 rounded-full border border-[#272744] bg-[#0B0B2A] text-white/90 font-medium hover:bg-[#101040] hover:text-white transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.25)]"
+              >
+                Load More Projects
+                <ChevronDown size={16} className="text-white/60" />
+              </button>
+            )}
+
+            {/* Pagination Bar */}
+            <div className="flex flex-col md:flex-row items-center justify-between w-full p-2 sm:p-3 rounded-3xl border border-[#272744] bg-[#05051E] gap-4">
+              
+              {/* Pages */}
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <button
+                  onClick={() => { setPage((p) => Math.max(1, p - 1)); setLimit(8); }}
+                  disabled={page === 1}
+                  className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#272744] bg-transparent text-white/70 hover:bg-[#1A1A32] disabled:opacity-50 transition-all font-medium"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+
+                {(() => {
+                  const getPageNumbers = () => {
+                    const total = actualTotalPages;
+                    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+                    if (page <= 3) return [1, 2, 3, "...", total];
+                    if (page >= total - 2) return [1, "...", total - 2, total - 1, total];
+                    return [1, "...", page, "...", total];
+                  };
+
+                  return getPageNumbers().map((pNum, index) => {
+                    if (pNum === "...") {
+                      return (
+                        <span key={`ellipsis-${index}`} className="text-white/50 px-1 sm:px-2 tracking-widest text-sm">
+                          ...
+                        </span>
+                      );
+                    }
+                    const isActive = page === pNum;
+                    return (
+                      <button
+                        key={`page-${pNum}`}
+                        onClick={() => { setPage(typeof pNum === "number" ? pNum : 1); setLimit(8); }}
+                        className={`flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl font-medium transition-all text-sm ${
+                          isActive
+                            ? "bg-[#A501FF] text-white shadow-[0_0_12px_0_rgba(165,1,255,0.4)]"
+                            : "border border-[#272744] bg-transparent text-white/70 hover:bg-[#1A1A32]"
+                        }`}
+                      >
+                        {pNum}
+                      </button>
+                    );
+                  });
+                })()}
+
+                <button
+                  onClick={() => { setPage((p) => Math.min(actualTotalPages, p + 1)); setLimit(8); }}
+                  disabled={page === actualTotalPages}
+                  className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#272744] bg-transparent text-white/70 hover:bg-[#1A1A32] disabled:opacity-50 transition-all font-medium"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+
+              {/* Jump to position */}
+              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:ml-auto">
+                <div className="w-px h-8 bg-[#272744] hidden md:block"></div>
+                <span className="text-[#6A6A88] text-[13px] sm:text-sm font-medium whitespace-nowrap">
+                  Jump to position
+                </span>
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    let val = parseInt(jumpTo);
+                    if (!isNaN(val)) {
+                      val = Math.max(1, val);
+                      const targetPage = Math.ceil(val / 8);
+                      setPage(Math.min(actualTotalPages, Math.max(1, targetPage)));
+                      setLimit(8);
+                      setJumpTo("");
+                    }
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <div className="flex items-center h-9 sm:h-10 px-3 rounded-xl border border-[#272744] bg-[#0B0B2A] focus-within:border-[#6A6A88] transition-colors">
+                    <span className="text-[#6A6A88] mr-2 text-sm font-mono">#</span>
+                    <input
+                      type="number"
+                      min="1"
+                      value={jumpTo}
+                      onChange={(e) => setJumpTo(e.target.value)}
+                      className="w-12 sm:w-16 bg-transparent outline-none text-white text-sm"
+                      placeholder="100"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="h-9 sm:h-10 px-5 sm:px-6 rounded-xl border border-[#272744] bg-[#1A1A32] hover:bg-[#272744] text-white font-medium transition-all text-[13px] sm:text-sm"
+                  >
+                    Go
+                  </button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -9,6 +9,7 @@ import TrustedBySection from "../components/sections/TrustedBySection";
 
 import { useNavigate } from "react-router-dom";
 import { useCreatePayPerScanCheckout } from "../hooks/api/useBilling";
+import Perspective from "../components/sections/Perspective";
 
 const Pricing = () => {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ const Pricing = () => {
   return (
     <div className="bg-[#020C30]">
       <PricingHero />
+      <Perspective />
       <FoundersPricing />
       <InvestorPricing />
       <section className="w-full bg-[#000124] py-16 my-12">

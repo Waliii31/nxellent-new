@@ -1,10 +1,8 @@
 import React from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import RefundPolicyModal from "../modals/RefundPolicyModal";
 
 const Footer: React.FC = () => {
-  const [isRefundModalOpen, setIsRefundModalOpen] = React.useState(false);
 
   return (
     <>
@@ -58,21 +56,11 @@ const Footer: React.FC = () => {
                 className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
             </Link>
-
-            <button
-              onClick={() => setIsRefundModalOpen(true)}
-              className="group flex items-center gap-2 text-white font-medium text-[15px] sm:text-[16px] transition-all duration-200 hover:opacity-80 appearance-none bg-transparent border-none p-0 cursor-pointer"
-            >
-              Refund Policy
-              <ArrowUpRight
-                size={16}
-                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </button>
           </div>
         </div>
+        <p className="alexandria text-center text-white/80 text-[15px] sm:text-[17px] leading-[150%] w-full mx-auto mt-10">© 2024 NXELLENT Platform. Built for builders who care about security.</p>
       </footer>
-      <RefundPolicyModal isOpen={isRefundModalOpen} onClose={() => setIsRefundModalOpen(false)} />
+
     </>
   );
 };

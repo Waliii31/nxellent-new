@@ -15,7 +15,12 @@ export const startGithubOAuth = () => {
 };
 
 export const connectGithub = () => {
-  window.location.href = (import.meta.env.VITE_API_URL || "") + "/auth/github/connect";
+  const token = localStorage.getItem("nx_token");
+  let url = (import.meta.env.VITE_API_URL || "") + "/auth/github/connect";
+  if (token) {
+    url += `?token=${encodeURIComponent(token)}`;
+  }
+  window.location.href = url;
 };
 
 export const githubStatus = () => api.get("/auth/github/status").then((r) => r.data);

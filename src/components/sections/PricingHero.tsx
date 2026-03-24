@@ -12,7 +12,7 @@ const PricingHero = () => {
   };
 
   return (
-    <section className="relative isolate w-full">
+    <section className="relative w-full overflow-hidden">
       {/* Navbar */}
       <div className="relative z-30">
         <Navbar isFixed={false} />
@@ -23,11 +23,11 @@ const PricingHero = () => {
         src="/all-hero.png"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
+        className="absolute inset-0 w-full h-full object-cover object-center"
       />
 
       {/* Overlay */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-b from-black/80 via-black/50 to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-b from-black/80 via-black/50 to-transparent" />
 
       {/* Content */}
       <motion.div
@@ -35,10 +35,8 @@ const PricingHero = () => {
           relative z-20
           mx-auto max-w-5xl
           px-4 sm:px-6 md:px-8 lg:px-10
-          pt-24 sm:pt-28 md:pt-32
-          pb-10 sm:pb-14 md:pb-20
-          min-h-[70vh] sm:min-h-[72vh] md:min-h-[75vh]
-          flex flex-col items-center justify-end text-center
+          min-h-[60vh] md:min-h-[70vh]
+          flex flex-col items-center justify-center text-center
         "
         variants={staggerContainer}
         initial="hidden"
@@ -46,12 +44,9 @@ const PricingHero = () => {
       >
         <motion.h1
           className="
-            text-white font-semibold font-[anybody ]
-            text-[28px] leading-tight
-            sm:text-[36px] sm:leading-[1.15]
-            md:text-[44px]
-            lg:text-[52px]
-            tracking-[-0.01em]
+            anybody text-white font-semibold
+            text-[28px] sm:text-[36px] md:text-[44px] lg:text-[52px]
+            leading-tight tracking-[-0.01em]
           "
           variants={rippleIn}
         >
@@ -61,8 +56,7 @@ const PricingHero = () => {
 
         <motion.p
           className="
-            text-white/90 font-light mt-3 sm:mt-4 md:mt-5
-            font-[Alexandria]
+            alexandria text-white/90 font-light mt-3 sm:mt-4 md:mt-5
             text-[14px] sm:text-[16px] md:text-[18px]
             leading-relaxed tracking-[-0.02em]
             max-w-2xl

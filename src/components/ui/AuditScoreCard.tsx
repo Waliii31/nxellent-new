@@ -12,6 +12,13 @@ type AuditScoreCardProps = {
   latestApplicationScan?: LatestScanEmbedDto | null;
   scoringDetails?: ScoringDetailsDto;
   isLoading?: boolean;
+  
+  // Accept flat metrics explicitly from list API endpoints
+  totalIssues?: number;
+  criticalIssues?: number;
+  highIssues?: number;
+  mediumIssues?: number;
+  lowIssues?: number;
 };
 
 const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
@@ -22,6 +29,11 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   latestApplicationScan,
   scoringDetails,
   isLoading = false,
+  totalIssues: flatTotalIssues,
+  criticalIssues: flatCriticalIssues,
+  highIssues: flatHighIssues,
+  mediumIssues: flatMediumIssues,
+  lowIssues: flatLowIssues,
 }) => {
   const navigate = useNavigate();
 
@@ -35,11 +47,14 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   const currentAppScan = latestApplicationScan;
 
   const primaryScan = currentContractScan || currentAppScan;
-  const scanStatus = primaryScan?.scanStatus?.status;
+  
+  // Handle various potential structures for the status from the backend
+  const rawStatus = primaryScan?.scanStatus?.status || (primaryScan as any)?.status || "";
+  const normalizedStatus = typeof rawStatus === "string" ? rawStatus.toLowerCase() : "";
 
   // Note: we check 'pending' or 'running' on the *current* (potentially updated) scan
-  const isScanPending = scanStatus === "pending" || scanStatus === "running";
-  const isScanFailed = scanStatus === "failed";
+  const isScanPending = ["pending", "running", "processing", "in_progress", "scanning", "started"].includes(normalizedStatus);
+  const isScanFailed = ["failed", "error", "cancelled", "timeout"].includes(normalizedStatus);
 
   const hasRealData = !!(currentContractScan || currentAppScan || scoringDetails);
   const hasCompletedScan = hasRealData && !isScanPending && !isScanFailed;
@@ -47,39 +62,70 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   // Helper to get issue counts from scoringDetails if available
   const getScoringDetailsCounts = () => {
     if (!scoringDetails) return null;
+    
+    // Check if the backend gave us flat counts
     const contractCounts = scoringDetails.contractTrack?.findingsCount;
     const appCounts = scoringDetails.applicationTrack?.findingsCount;
-    return contractCounts || appCounts || null;
+    
+    let critical = (contractCounts?.critical || 0) + (appCounts?.critical || 0);
+    let high     = (contractCounts?.high || 0) + (appCounts?.high || 0);
+    let medium   = (contractCounts?.medium || 0) + (appCounts?.medium || 0);
+    let low      = (contractCounts?.low || 0) + (appCounts?.low || 0);
+    let total    = (contractCounts?.total || 0) + (appCounts?.total || 0);
+
+    // If counts are completely 0 but we have categories, we should aggregate manually
+    if (total === 0) {
+      const tallyCategories = (categories: Record<string, any> | undefined) => {
+        if (!categories) return;
+        Object.values(categories).forEach((cat: any) => {
+          const findings = cat?.findings || [];
+          findings.forEach((f: any) => {
+            const sev = (f.severity || "low").toLowerCase();
+            if (sev === "critical") critical++;
+            else if (sev === "high") high++;
+            else if (sev === "medium") medium++;
+            else low++;
+            total++;
+          });
+        });
+      };
+      
+      tallyCategories(scoringDetails.contractTrack?.categories);
+      tallyCategories(scoringDetails.applicationTrack?.categories);
+    }
+
+    return { critical, high, medium, low, total };
   };
 
   const scoringCounts = getScoringDetailsCounts();
 
   const overallScore = hasCompletedScan
-    ? (Number(primaryScan?.scores?.overall) || Number(scoringDetails?.overall) || 0)
+    ? (Number(scoringDetails?.overall) || Number(primaryScan?.scores?.overall) || 0)
     : 0;
 
+  // We rely on either the flat API props, primary scan blocks, or our manual aggregation
   const criticalIssues = hasCompletedScan
-    ? (primaryScan?.issueCounts?.critical ?? scoringCounts?.critical ?? 0)
+    ? (flatCriticalIssues ?? primaryScan?.issueCounts?.critical ?? scoringCounts?.critical ?? 0)
     : isScanPending ? "..." : 0;
 
   const highIssues = hasCompletedScan
-    ? (primaryScan?.issueCounts?.high ?? scoringCounts?.high ?? 0)
+    ? (flatHighIssues ?? primaryScan?.issueCounts?.high ?? scoringCounts?.high ?? 0)
     : isScanPending ? "..." : 0;
 
   const mediumIssues = hasCompletedScan
-    ? (primaryScan?.issueCounts?.medium ?? scoringCounts?.medium ?? 0)
+    ? (flatMediumIssues ?? primaryScan?.issueCounts?.medium ?? scoringCounts?.medium ?? 0)
     : isScanPending ? "..." : 0;
 
   const lowIssues = hasCompletedScan
-    ? (primaryScan?.issueCounts?.low ?? scoringCounts?.low ?? 0)
+    ? (flatLowIssues ?? primaryScan?.issueCounts?.low ?? scoringCounts?.low ?? 0)
     : isScanPending ? "..." : 0;
 
   const totalIssues = hasCompletedScan
-    ? (primaryScan?.issueCounts?.total ?? scoringCounts?.total ?? 0)
+    ? (flatTotalIssues ?? primaryScan?.issueCounts?.total ?? scoringCounts?.total ?? 0)
     : isScanPending ? "..." : 0;
 
   const coverage = hasCompletedScan
-    ? (Number(primaryScan?.coverage) || Number(scoringDetails?.coverage) || 0)
+    ? (Number(scoringDetails?.coverage) || Number(primaryScan?.coverage) || 0)
     : 0;
 
   // Calculate time ago
@@ -165,7 +211,7 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
           <h3 className="anybody text-xl font-bold text-white mb-2">{protocolName}</h3>
           <p className="text-[#FFC2C8] text-sm font-semibold mb-1">Scan in Progress...</p>
           <p className="text-white/60 text-xs mb-4">
-            {scanStatus === "pending" ? "Scan queued and waiting to start" : "Analyzing your code for security issues"}
+            {normalizedStatus === "pending" ? "Scan queued and waiting to start" : "Analyzing your code for security issues"}
           </p>
           <div className="flex items-center gap-2 text-xs text-white/50">
             <Clock className="w-3.5 h-3.5" />

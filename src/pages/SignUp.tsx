@@ -1,7 +1,7 @@
 // src/pages/SignUp.tsx
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Github } from "lucide-react";
+import { Eye, EyeOff, Github, ArrowLeft } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { register, startGithubOAuth } from "../services/authService";
 import { useAppDispatch } from "../app/store";
@@ -47,8 +47,19 @@ const SignUp = () => {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
-      className="w-full min-h-svh flex items-center justify-center px-4 py-16"
+      className="w-full min-h-svh flex flex-col px-4 py-16"
     >
+      {/* Back Button — floating top-left */}
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="absolute top-6 left-6 group flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/70 hover:text-white hover:bg-white/10 hover:border-[#FD7EFF]/30 transition-all duration-300 cursor-pointer z-10"
+      >
+        <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform duration-200" />
+        <span className="text-sm font-medium hidden sm:inline">Back</span>
+      </button>
+
+      <div className="flex-1 flex items-center justify-center">
       <div className="w-full max-w-[680px] mx-auto text-center">
         {/* Heading */}
         <h1 className="anybody text-white font-semibold text-[32px] sm:text-[40px] md:text-[48px] leading-[60px] font-[anybody ]">
@@ -79,6 +90,16 @@ const SignUp = () => {
             backgroundColor: "#000124",
           }}
         >
+          {/* Logo inside card */}
+          <Link
+            to="/"
+            className="block text-center mb-6"
+          >
+            <span className="text-white font-extrabold text-2xl tracking-wide hover:opacity-80 transition-opacity duration-200">
+              NXELLENT
+            </span>
+          </Link>
+
           <form className="space-y-5">
             {/* Full name */}
             <div className="text-left">
@@ -352,6 +373,7 @@ const SignUp = () => {
           </div>
         </div>
       </div >
+      </div>
     </section >
   );
 };

@@ -98,7 +98,7 @@ export default function KPIStatsBar(): React.ReactElement {
               <div key={i} className="flex items-center gap-5 p-4 xl:px-7">
                 <div className="flex justify-center items-center rounded-md">{k.icon}</div>
                 <div className="flex flex-col gap-1">
-                  <p className="alexandria text-base font-medium text-brand-text-white">{k.title}</p>
+                  <p className="alexandria text-base font-medium text-white">{k.title}</p>
                   <p className={`font-medium text-white ${k.large ? "text-xl" : "text-3xl"}`}>{k.value}</p>
                 </div>
               </div>

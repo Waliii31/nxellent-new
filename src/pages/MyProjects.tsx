@@ -143,13 +143,18 @@ export default function MyProjects(): React.ReactElement {
               !isError &&
               filteredProjects.map((project) => (
                 <AuditScoreCard
-                  key={project.id}
+                  key={project.id || Math.random().toString()}
                   projectId={project.id}
                   protocolName={project.name}
                   visibility={project.visibility}
                   latestContractScan={project.latestContractScan}
                   latestApplicationScan={project.latestApplicationScan}
                   scoringDetails={project.scoringDetails}
+                  totalIssues={project.totalIssues != null ? Number(project.totalIssues) : undefined}
+                  criticalIssues={project.criticalIssues != null ? Number(project.criticalIssues) : undefined}
+                  highIssues={project.highIssues != null ? Number(project.highIssues) : undefined}
+                  mediumIssues={project.mediumIssues != null ? Number(project.mediumIssues) : undefined}
+                  lowIssues={project.lowIssues != null ? Number(project.lowIssues) : undefined}
                 />
               ))}
           </div>

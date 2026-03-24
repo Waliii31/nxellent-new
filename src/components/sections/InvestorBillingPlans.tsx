@@ -13,7 +13,6 @@ type InvestorPlan = {
     title: string;
     priceLabel: string;
     cadence: string;
-    blurb: string;
     features: string[];
     filled?: boolean;
 };
@@ -34,8 +33,6 @@ const plans: InvestorPlan[] = [
         title: "Investor Basic",
         priceLabel: "$499",
         cadence: "Per Month",
-        blurb:
-            "Full leaderboard data • Investor dashboard • Batch scanning (10 projects/mo)",
         features: [
             "Full leadership access",
             "Batch scanning (10 projects/mo)",
@@ -50,8 +47,6 @@ const plans: InvestorPlan[] = [
         title: "Investor Pro",
         priceLabel: "$1,499",
         cadence: "Per Month",
-        blurb:
-            "Unlimited scans • Portfolio dashboard with alerts • Bulk export • API access",
         features: [
             "Unlimited project scans",
             "Bulk export (CSV/PDF)",
@@ -68,8 +63,6 @@ const plans: InvestorPlan[] = [
         title: "Enterprise",
         priceLabel: "Custom",
         cadence: "$3k – $10k Per Month",
-        blurb:
-            "White-label dashboard • Unlimited scans • Dedicated support + compliance",
         features: [
             "White-label dashboard",
             "Dedicated support team",
@@ -99,7 +92,6 @@ const BillingCard: React.FC<BillingCardProps> = ({
     title,
     priceLabel,
     cadence,
-    blurb,
     features,
     filled,
     isSelected,
@@ -175,9 +167,6 @@ const BillingCard: React.FC<BillingCardProps> = ({
                             {cadence}
                         </span>
                     </div>
-
-                    {/* Blurb */}
-                    <p className="alexandria text-white/80 leading-relaxed mb-6">{blurb}</p>
 
                     {/* Features */}
                     <ul className="space-y-4 mb-10">

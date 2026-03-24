@@ -249,7 +249,7 @@ export default function NotificationDrawer({ open, onClose }: Props) {
 
             {/* Body */}
             <motion.div
-              className="px-6 py-4 space-y-4 overflow-y-auto h-[calc(100%-260px)]"
+              className="px-6 py-4 space-y-4 overflow-y-auto h-[calc(100%-260px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
               variants={staggerContainer}
               initial="hidden"
               animate="visible"
@@ -334,14 +334,16 @@ export default function NotificationDrawer({ open, onClose }: Props) {
                   >
                     {/* Gradient Border Wrapper */}
                     <div
-                      className={`rounded - 2xl p - px transition - all duration - 300 ${n.read
-                        ? "bg-white/10"
-                        : "bg-linear-to-br from-[#D467B9]/50 via-[#5FA8FF]/50 to-[#D467B9]/50"
-                        } `}
+                      className={`rounded-2xl p-px transition-all duration-300 ${
+                        n.read
+                          ? "bg-white/10"
+                          : "bg-linear-to-br from-[#D467B9]/50 via-[#5FA8FF]/50 to-[#D467B9]/50"
+                      }`}
                     >
                       <div
-                        className={`rounded - 2xl p - 4 bg - [#0d0b1d] backdrop - blur - sm flex - col gap - 3 transition - all duration - 300 ${n.read ? "opacity-60" : ""
-                          } `}
+                        className={`rounded-2xl p-4 bg-[#0d0b1d] flex flex-col gap-3 transition-all duration-300 ${
+                          n.read ? "opacity-60" : ""
+                        }`}
                       >
                         {/* Header Row */}
                         <div className="flex items-start justify-between gap-3">
