@@ -28,11 +28,24 @@ export const usePublicProject = (id?: string) =>
       api.get<ProjectResponseDto>(`/projects/public/${id}`).then((r) => r.data),
   });
 
-export const useLeaderboardProjects = (page: number = 1, limit: number = 15) =>
+export const useLeaderboardProjects = (params: {
+  page?: number;
+  limit?: number;
+  tab?: string;
+  period?: string;
+  search?: string;
+} = {}) =>
   useQuery<any>({
-    queryKey: ["projects-leaderboard", page, limit],
-    queryFn: () =>
-      api.get<any>(`/projects/leaderboard?page=${page}&limit=${limit}`).then((r) => r.data),
+    queryKey: ["projects-leaderboard", params],
+    queryFn: () => {
+      const q = new URLSearchParams();
+      if (params.page) q.append("page", String(params.page));
+      if (params.limit) q.append("limit", String(params.limit));
+      if (params.tab) q.append("tab", params.tab);
+      if (params.period) q.append("period", params.period);
+      if (params.search) q.append("search", params.search);
+      return api.get<any>(`/projects/leaderboard?${q.toString()}`).then((r) => r.data);
+    },
   });
 
 export const useMyProjects = () =>

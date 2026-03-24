@@ -43,52 +43,44 @@ const SmartContracts: React.FC = () => {
   const [limit, setLimit] = useState(8);
   const [jumpTo, setJumpTo] = useState("");
 
+  // Debounce search and reset pagination dynamically on filter shifts
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [category, time]);
+
+  const apiTab = category === "Defi" ? "contracts" : category === "App" ? "applications" : "overall";
+  const apiPeriod = time === "24h" ? "1d" : time === "7d" ? "7d" : time === "30d" ? "1m" : "all";
+
   const {
     data: projectsData,
     isLoading: loadingProjects,
     isError: projectsError,
     refetch: refetchProjects,
-  } = useLeaderboardProjects(page, limit);
+  } = useLeaderboardProjects({
+    page,
+    limit,
+    tab: apiTab,
+    period: apiPeriod,
+    search: debouncedSearch,
+  });
 
   const safeProjects: ProjectResponseDto[] = useMemo(() => {
-    let result: any[] = [];
-    if (Array.isArray(projectsData)) result = [...projectsData];
-    else if (projectsData && typeof projectsData === "object") {
-      if (Array.isArray((projectsData as any).data)) result = [...(projectsData as any).data];
-      else if (Array.isArray((projectsData as any).projects)) result = [...(projectsData as any).projects];
+    if (Array.isArray(projectsData)) return projectsData;
+    if (projectsData && typeof projectsData === "object") {
+      if (Array.isArray((projectsData as any).data)) return (projectsData as any).data;
+      if (Array.isArray((projectsData as any).projects)) return (projectsData as any).projects;
     }
-
-    // Populate demo project up to 50 items for testing
-    if (!loadingProjects && result.length < 50) {
-      if (result.length > 0) {
-        const demoCount = 50 - result.length;
-        const template = result[0];
-        for (let i = 0; i < demoCount; i++) {
-          result.push({
-            ...template,
-            id: `demo-${i}`,
-            _id: `demo-${i}`,
-            name: `${template.name || 'Demo Project'} (Demo ${i + 1})`,
-          });
-        }
-      } else {
-        for (let i = 0; i < 50; i++) {
-          result.push({
-            id: `demo-empty-${i}`,
-            _id: `demo-empty-${i}`,
-            name: `Simulated Project #${i + 1}`,
-            type: i % 2 === 0 ? "app" : "defi",
-            visibility: "public",
-            score: 75 + (i % 20),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          });
-        }
-      }
-    }
-
-    return result as ProjectResponseDto[];
-  }, [projectsData, loadingProjects]);
+    return [];
+  }, [projectsData]);
 
   // If the backend returns flat arrays instead of pagination payloads, slice locally.
   // Extracted later to actualTotalPages after evaluating filtered list.
@@ -174,32 +166,11 @@ const SmartContracts: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     let list = allRows;
-    const q = search.trim().toLowerCase();
-    if (q) {
-      list = list.filter((p) => [p.name, p.category, p.chain, p.id].some((f) => f.toLowerCase().includes(q)));
-    }
     if (chain !== "All Chains") list = list.filter((p) => p.chain === chain);
-    if (category === "Defi") {
-      list = list.filter((p) => p.hasContract);
-    } else if (category === "App") {
-      list = list.filter((p) => p.hasApplication);
-    }
     if (region !== "Global") list = list.filter((p) => p.region === region);
     if (visibility !== "All") list = list.filter((p) => p.visibility === visibility);
-    if (time !== "All Time") {
-      const now = Date.now();
-      const timeMap: Record<string, number> = {
-        "24h": 24 * 60 * 60 * 1000,
-        "7d": 7 * 24 * 60 * 60 * 1000,
-        "30d": 30 * 24 * 60 * 60 * 1000,
-      };
-      const ms = timeMap[time];
-      if (ms) {
-        list = list.filter((p) => p.timestamp >= now - ms);
-      }
-    }
     return list;
-  }, [allRows, chain, category, visibility, time, search, region]);
+  }, [allRows, chain, region, visibility]);
 
   const paginatedProjects = useMemo(() => {
     // Let backend pagination handle it, or slice locally if backend returned flat list
