@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 
 const LeaderHero = () => {
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full">
       <div className="relative z-30">
         <Navbar isFixed={true} />
       </div>

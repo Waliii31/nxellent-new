@@ -580,13 +580,18 @@ const ProjectDetails: React.FC = () => {
                                 <GlowCard className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-6 sm:gap-10 lg:gap-20">
                                     {/* Overall Score */}
                                     <div className="relative flex justify-center items-center min-h-20">
-                                        <div className="absolute text-center z-10">
+                                        <div className="absolute text-center z-10 flex flex-col items-center">
                                             <h1 className="inter font-normal text-4xl sm:text-5xl">
                                                 {overallScore}
                                             </h1>
-                                            <p className="inter font-normal text-[#8B5CF6] text-xs sm:text-sm mt-1">
-                                                {rankLabel}
-                                            </p>
+                                            <div className="flex items-center gap-1.5 mt-1">
+                                                <div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 rounded-lg bg-linear-to-br from-[#FD7EFF]/20 to-[#A855F7]/20 flex items-center justify-center border border-[#FD7EFF]/30">
+                                                    <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FFC2C8]" />
+                                                </div>
+                                                <p className="inter font-medium text-[#8B5CF6] text-xs sm:text-sm">
+                                                    {rankLabel}
+                                                </p>
+                                            </div>
                                         </div>
                                         <ScoreRing score={overallScore} size={160} strokeWidth={10} />
                                     </div>

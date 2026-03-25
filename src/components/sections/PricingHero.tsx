@@ -12,7 +12,7 @@ const PricingHero = () => {
   };
 
   return (
-    <section className="relative w-full overflow-hidden">
+    <section className="relative w-full">
       {/* Navbar */}
       <div className="relative z-30">
         <Navbar isFixed={false} />
