@@ -20,10 +20,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
   return (
     <article
       className={[
-        "relative flex flex-col justify-start rounded-[20px]",
-        // "min-h-[520px] sm:min-h-[560px] md:min-h-[580px]",
+        "relative flex flex-col justify-start rounded-[20px] overflow-hidden",
         "p-6 sm:p-8 lg:p-10",
-        "backdrop-blur-[194px]",
         "transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(63,132,185,0.25)]",
         className || "",
       ].join(" ")}
@@ -32,7 +30,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       {/* Gradient bottom border */}
       <span
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 h-[5px] w-full rounded-b-[20px]"
+        className="pointer-events-none absolute bottom-0 left-0 h-[5px] w-full z-0"
         style={{
           background:
             "linear-gradient(270.12deg, #3F84B9 23.84%, #D467B9 99.89%)",
@@ -40,7 +38,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       />
 
       {/* ===== Image Section ===== */}
-      <div className="mb-8 sm:mb-10 grid place-items-center">
+      <div className="mb-8 sm:mb-10 grid place-items-center relative z-10">
         <div className="w-full">
           <img
             src={imgSrc}
@@ -52,8 +50,8 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
       </div>
 
       {/* ===== Text Content ===== */}
-      <div className="flex flex-col items-start text-left md:items-start md:text-left gap-3 sm:gap-4">
-        <h2 className="anybody  text-white text-[20px] sm:text-[22px] md:text-[24px] font-normal tracking-[-0.01em]">
+      <div className="flex flex-col items-start text-left md:items-start md:text-left gap-3 sm:gap-4 relative z-10 w-full h-full justify-end">
+        <h2 className="anybody text-white text-[20px] sm:text-[22px] md:text-[24px] font-normal tracking-[-0.01em]">
           {title}
         </h2>
 

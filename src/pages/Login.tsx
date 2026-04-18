@@ -88,11 +88,9 @@ const Login = () => {
           {/* Logo inside card */}
           <Link
             to="/"
-            className="block text-center mb-6"
+            className="flex justify-center mb-6 hover:opacity-80 transition-opacity duration-200"
           >
-            <span className="text-white font-extrabold text-2xl tracking-wide hover:opacity-80 transition-opacity duration-200">
-              NXELLENT
-            </span>
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-10 w-auto object-contain" />
           </Link>
 
           <form className="space-y-5">

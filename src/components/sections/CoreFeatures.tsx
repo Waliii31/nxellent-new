@@ -1,8 +1,5 @@
 import React from "react";
 import FeatureCard from "../ui/FeatureCard";
-import securityPng from "/Feature-1.png";
-import complexityPng from "/Feature-2.png";
-import speedPng from "/Feature-3.png";
 import ScrollReveal from "../animations/ScrollReveal";
 
 const CoreFeatures: React.FC = () => {
@@ -24,19 +21,19 @@ const CoreFeatures: React.FC = () => {
         {/* Cards */}
         <div className="mt-8 sm:mt-10 md:mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 md:gap-8">
           <FeatureCard
-            imgSrc={securityPng}
+            imgSrc="/Feature-1.png"
             title="Security First"
             description="Easy to know how cryptocurrency works and friendly to newbie."
             background="linear-gradient(180deg, #02002B 0%, #000234 100%)"
           />
           <FeatureCard
-            imgSrc={complexityPng}
+            imgSrc="/Feature-2.png"
             title="Compete & Flex"
             description="Public leaderboards and shareable score cards for maximum flex."
             background="linear-gradient(180deg, #000241 0%, #00003B 100%)"
           />
           <FeatureCard
-            imgSrc={speedPng}
+            imgSrc="/Feature-3.png"
             title="Instant Results"
             description="Get your risk score in minutes, not hours."
             background="linear-gradient(180deg, #000027 0%, #010022 100%)"

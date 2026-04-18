@@ -11,9 +11,7 @@ const Footer: React.FC = () => {
           {/* Left Section */}
           <div className="flex flex-col gap-4 max-w-xl">
             {/* Logo / Brand Name */}
-            <h2 className="anybody  text-white text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-none">
-              NXELLENT
-            </h2>
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-10 sm:h-[46px] w-auto object-contain" />
 
             {/* Description */}
             <p className="alexandria text-white/80 text-[15px] sm:text-[17px] leading-[150%] max-w-md">

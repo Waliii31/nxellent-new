@@ -82,9 +82,9 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
           {/* Logo */}
           <h1
             onClick={() => navigate("/")}
-            className="text-white font-extrabold cursor-pointer text-2xl tracking-wide"
+            className="text-white font-extrabold cursor-pointer text-2xl tracking-wide flex items-center"
           >
-            NXELLENT
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-8 md:h-10 w-auto object-contain" />
           </h1>
 
           {/* Desktop Links */}
