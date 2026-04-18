@@ -90,7 +90,7 @@ const Login = () => {
             to="/"
             className="flex justify-center mb-6 hover:opacity-80 transition-opacity duration-200"
           >
-            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-10 w-auto object-contain" />
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-6 md:h-10 w-auto object-contain" />
           </Link>
 
           <form className="space-y-5">

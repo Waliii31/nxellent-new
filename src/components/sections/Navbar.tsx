@@ -84,7 +84,7 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
             onClick={() => navigate("/")}
             className="text-white font-extrabold cursor-pointer text-2xl tracking-wide flex items-center"
           >
-            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-8 md:h-10 w-auto object-contain" />
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-6 md:h-10 w-auto object-contain" />
           </h1>
 
           {/* Desktop Links */}

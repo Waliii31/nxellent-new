@@ -5,7 +5,6 @@ import ScrollReveal from "../animations/ScrollReveal";
 import { useLeaderboardProjects } from "../../hooks/api/useProjects";
 
 // Assets
-import gauge from "/guage.png";
 import PrimaryButton from "../ui/PrimaryButton";
 
 // Helper to calculate time ago
@@ -99,8 +98,7 @@ const TopProjects: React.FC = () => {
                   score={score}
                   tier={getTier(score)}
                   timeAgo={getTimeAgo(timeAgoDate)}
-                  gaugeSrc={gauge}
-                  contractScore={contractScore}
+                    contractScore={contractScore}
                   applicationScore={applicationScore}
                   coverage={p.coverage || p.scoringDetails?.coverage || 0}
                   totalIssues={p.totalIssues || 0}

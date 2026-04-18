@@ -4,7 +4,6 @@ import { useLeaderboardProjects } from "../../hooks/api/useProjects";
 import type { ProjectResponseDto } from "../../types/project";
 
 import ProjectRow from "../ui/ProjectRow";
-import gauge from "/guage.png";
 import arrowUp from "/profit.svg";
 import KPIStatsBar from "../ui/KPIStatsBar";
 
@@ -269,7 +268,6 @@ const SmartContracts: React.FC = () => {
               score={p.score}
               tier={p.tier}
               timeAgo={p.timeAgo}
-              gaugeSrc={gauge}
               change={p.change}
               // Pass new metrics
               contractScore={p.contractScore}

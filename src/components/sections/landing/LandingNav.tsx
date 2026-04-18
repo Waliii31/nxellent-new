@@ -26,7 +26,7 @@ export const LandingNav = () => {
           to="/"
           className="cursor-pointer hover:opacity-90 transition-opacity flex items-center"
         >
-          <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-8 md:h-10 w-auto object-contain" />
+          <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-6 md:h-10 w-auto object-contain" />
         </Link>
 
         {/* Desktop: nav links + action buttons */}

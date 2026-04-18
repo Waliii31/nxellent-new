@@ -246,20 +246,27 @@ export const LandingFAQSection = (): JSX.Element => {
           </motion.p>
 
           {/* Contact CTA */}
-          <motion.button
-            className="inline-flex items-center gap-3 px-5 md:px-6 py-2.5 md:py-3 rounded-[48px] border border-[#fd7eff55] bg-[#00000001] text-white font-['Plus_Jakarta_Sans',Helvetica] font-medium text-sm cursor-pointer backdrop-blur-[2px] transition-all"
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.4 }}
             transition={{ duration: 0.55, delay: 0.2 }}
-            whileHover={{ borderColor: "rgba(220,10,250,0.6)", background: "rgba(220,10,250,0.06)" }}
-            whileTap={{ scale: 0.97 }}
+            className="inline-block relative z-50"
           >
-            Contact us
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </motion.button>
+            <motion.a
+              href="mailto:admin@nxellent.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 px-5 md:px-6 py-2.5 md:py-3 rounded-[48px] border border-[#fd7eff55] bg-[#dc0afa11] hover:bg-[#dc0afa22] text-white font-['Plus_Jakarta_Sans',Helvetica] font-medium text-sm cursor-pointer backdrop-blur-md transition-all no-underline"
+              whileHover={{ borderColor: "rgba(220,10,250,0.8)" }}
+              whileTap={{ scale: 0.97 }}
+            >
+              Contact us
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </motion.a>
+          </motion.div>
 
           {/* Decorative circuit lines */}
           <svg

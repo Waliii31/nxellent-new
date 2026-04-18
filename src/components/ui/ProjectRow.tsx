@@ -7,7 +7,6 @@ type ProjectRowProps = {
   score: number;
   tier: string;
   timeAgo: string;
-  gaugeSrc: string;
   change?: {
     value: number;
     arrowSrc: string;
@@ -45,26 +44,21 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
   const isLoss = typeof change?.value === "number" && change.value < 0;
 
   return (
-    <article
-      className={[
-        "relative flex flex-col gap-4",
-        "lg:flex-row lg:items-center lg:gap-6",
-        "rounded-[20px] px-6 md:px-8 py-5",
-        "backdrop-blur-[194px]",
-        "border border-white/5 hover:border-white/10 transition-colors",
-      ].join(" ")}
-      style={{
-        background: "linear-gradient(180deg, rgba(0, 0, 37, 0.8) 0%, rgba(0, 0, 37, 0.4) 100%)",
-      }}
-    >
-      {/* Gradient bottom border */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 h-[2px] w-full rounded-b-[20px] opacity-50"
+    <div className="relative w-full p-[2px] rounded-[20px] group transition-all duration-300">
+      {/* Full Gradient border wrapper */}
+      <div className="absolute inset-0 bg-[linear-gradient(270deg,rgba(63,132,185,1)_0%,rgba(212,103,185,1)_100%)] rounded-[20px] z-0 opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      <article
+        className={[
+          "relative flex flex-col gap-4",
+          "lg:flex-row lg:items-center lg:gap-6",
+          "rounded-[18px] px-4 sm:px-6 md:px-8 py-4 sm:py-6",
+          "backdrop-blur-[97px] z-10 w-full h-full overflow-hidden",
+        ].join(" ")}
         style={{
-          background: "linear-gradient(90deg, transparent 0%, #3F84B9 20%, #D467B9 80%, transparent 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,39,1) 0%, rgba(1,0,34,1) 100%)",
         }}
-      />
+      >
 
       {/* Left block: Rank + Name + Category */}
       <div className="flex items-center gap-4 sm:gap-6 w-full lg:w-auto lg:min-w-[300px]">
@@ -166,24 +160,35 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
       {/* Right block: Overall Score & Gauge */}
       <div className="flex items-center justify-between lg:justify-end gap-6 lg:min-w-[200px]">
         {/* Score / Tier */}
-        <div className="text-right">
-          <div className="text-white text-[32px] font-bold leading-none tracking-tight">
-            {score}
+        <div className="text-right flex items-center justify-end gap-3 sm:gap-6 lg:gap-8">
+          <div className="flex items-center gap-3">
+             <div className="flex flex-col items-center">
+               <div className="font-['Plus_Jakarta_Sans',Helvetica] font-bold text-white text-2xl sm:text-3xl md:text-[40px] leading-none mb-1 text-center">
+                 {score}
+               </div>
+               <div className="text-[#ffffffcc] text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-center shrink-0">
+                 {tier}
+               </div>
+             </div>
           </div>
-          <div className="mt-1 text-white/50 text-[11px] font-bold tracking-widest uppercase">
-            {tier}
-          </div>
-        </div>
 
-        {/* Time pill */}
-        <div className="hidden xl:flex flex-col items-end gap-1 min-w-[80px]">
-          <div className="flex items-center gap-1.5 text-xs text-white/60 bg-white/5 px-2 py-1 rounded-full border border-white/5">
-            <img src="/time.svg" alt="" className="w-3 h-3" />
-            {timeAgo}
+          {/* Glowing Time Pill */}
+          <div className="hidden sm:inline-flex items-center justify-center gap-2 px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-[40px] bg-[linear-gradient(247deg,rgba(223,70,242,1)_0%,rgba(165,1,255,1)_100%)] whitespace-nowrap">
+            <div className="inline-flex items-center gap-1.5 flex-[0_0_auto]">
+              <img
+                className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5"
+                alt="Time icon"
+                src="/figmaAssets/ri-time-line.svg"
+              />
+              <div className="font-['Alexandria',Helvetica] font-light text-[#450146] text-xs md:text-sm tracking-tight">
+                {timeAgo}
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </article>
+  </div>
   );
 };
 
