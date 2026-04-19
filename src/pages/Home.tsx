@@ -1,5 +1,7 @@
 import { motion } from "framer-motion";
-import { LandingNav } from "../components/sections/landing/LandingNav";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import Navbar from "../components/sections/Navbar";
 import { LandingHeroSection } from "../components/sections/landing/LandingHeroSection";
 import { LandingHowItWorksSection } from "../components/sections/landing/LandingHowItWorksSection";
 import { LandingValueAndLeaderboardSection } from "../components/sections/landing/LandingValueAndLeaderboardSection";
@@ -7,6 +9,17 @@ import { LandingFAQSection } from "../components/sections/landing/LandingFAQSect
 import Footer from "../components/sections/Footer";
 
 const Home = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === "#faq") {
+      setTimeout(() => {
+        document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+      }, 300);
+    } else if (!location.hash) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [location]);
 
   return (
     <div className="bg-[#020c30] overflow-hidden w-full flex flex-col relative">
@@ -19,20 +32,20 @@ const Home = () => {
         transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="pointer-events-none absolute top-[100px] right-[-80px] w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full"
+        className="pointer-events-none absolute top-[100px] -right-20 w-[260px] h-[260px] md:w-[420px] md:h-[420px] rounded-full"
         style={{ background: "radial-gradient(circle, rgba(255,62,196,0.08) 0%, transparent 70%)", filter: "blur(60px)" }}
         animate={{ x: [0, -30, 0], y: [0, 40, 0] }}
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 3 }}
       />
       <motion.div
-        className="pointer-events-none absolute top-[1200px] right-[100px] w-[240px] h-[240px] md:w-[360px] md:h-[360px] rounded-full"
+        className="pointer-events-none absolute top-[1200px] right-[100px] w-60 h-60 md:w-[360px] md:h-[360px] rounded-full"
         style={{ background: "radial-gradient(circle, rgba(63,132,185,0.08) 0%, transparent 70%)", filter: "blur(50px)" }}
         animate={{ x: [0, 25, 0], y: [0, -35, 0] }}
         transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 6 }}
       />
 
       {/* Navigation */}
-      <LandingNav />
+      <Navbar />
 
       {/* Hero — 2-col: copy left, animated code scan right */}
       <LandingHeroSection />

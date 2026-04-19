@@ -154,7 +154,7 @@ function FaqItem({
 
 export const LandingFAQSection = (): JSX.Element => {
   return (
-    <section className="relative w-full px-5 sm:px-10 md:px-16 lg:px-[120px] py-12 md:py-24 overflow-hidden">
+    <section id="faq" className="relative w-full px-5 sm:px-10 md:px-16 lg:px-[120px] py-12 md:py-24 overflow-hidden">
 
       {/* Subtle scan beam */}
       <motion.div

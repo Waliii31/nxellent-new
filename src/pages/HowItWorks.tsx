@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { LandingNav } from "../components/sections/landing/LandingNav";
+import Navbar from "../components/sections/Navbar";
 import Footer from "../components/sections/Footer";
 
 // ─── Shared helpers ───────────────────────────────────────────────────
@@ -102,8 +102,6 @@ function ConnectVisual() {
         </div>
         <motion.button
           className="h-[42px] px-6 rounded-xl text-sm font-semibold font-['Plus_Jakarta_Sans',Helvetica] bg-[linear-gradient(135deg,rgba(255,200,87,1),rgba(255,62,196,1))] text-[#333] border-0 cursor-pointer shrink-0"
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.97 }}
         >
           Scan now →
         </motion.button>
@@ -347,10 +345,10 @@ const HowItWorks = () => {
         animate={{x:[0,-25,0],y:[0,30,0]}} transition={{duration:18,repeat:Infinity,ease:"easeInOut",delay:4}} />
 
       {/* Shared nav */}
-      <LandingNav />
+      <Navbar />
 
       {/* ── Hero ── */}
-      <section className="relative z-10 flex flex-col items-center text-center px-5 sm:px-10 md:px-16 lg:px-[120px] pt-10 md:pt-16 pb-16 md:pb-28 gap-5 md:gap-6 overflow-hidden">
+      <section className="relative z-10 flex flex-col items-center text-center px-5 sm:px-10 md:px-16 lg:px-[120px] pt-12 md:pt-20 pb-16 md:pb-28 gap-5 md:gap-6 overflow-hidden">
 
         {/* Animated dot-grid */}
         <motion.div className="absolute inset-0 pointer-events-none"

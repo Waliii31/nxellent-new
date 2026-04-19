@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import PrimaryButton from "../../ui/PrimaryButton";
+import SecondaryButton from "../../ui/SecondaryButton";
 
 // ── Code lines to display in the terminal ──────────────────────────────
 const codeLines = [
@@ -26,13 +27,12 @@ const findings = [
 
 const severityColor: Record<string, string> = {
   HIGH: "text-[#fd0031] bg-[#fd003118]",
-  MED:  "text-[#ff9800] bg-[#ff980018]",
+  MED: "text-[#ff9800] bg-[#ff980018]",
   PASS: "text-[#4caf50] bg-[#4caf5018]",
 };
 
 // ── Animation phases: 0=typing 1=scanning 2=results ──────────────────
 export const LandingHeroSection = () => {
-  const navigate = useNavigate();
   const [phase, setPhase] = useState<0 | 1 | 2>(0);
   const [visibleLines, setVisibleLines] = useState(0);
   const [scanPct, setScanPct] = useState(0);
@@ -120,7 +120,7 @@ export const LandingHeroSection = () => {
       </svg>
 
       {/* ── Main 2-col layout ────────────────────────────────────────────── */}
-      <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 lg:gap-16 px-5 sm:px-10 md:px-16 lg:px-[120px] py-12 md:py-24 min-h-0 lg:min-h-[760px]">
+      <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 lg:gap-16 px-5 sm:px-10 md:px-16 lg:px-[120px] pt-12 pb-24 md:pt-20 md:pb-40 min-h-0 lg:min-h-[800px]">
 
         {/* ── LEFT: copy + CTAs ──────────────────────────────────────────── */}
         <div className="flex flex-col gap-6 md:gap-8 flex-1 min-w-0 items-center lg:items-start text-center lg:text-left">
@@ -169,9 +169,7 @@ export const LandingHeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.45, ease: "easeOut" }}
           >
-            Paste your smart contract or link your repo. Our engine scans for
-            vulnerabilities, scores your security posture, and ranks you on the
-            global leaderboard — in minutes.
+            Scan your code, get a risk score, and know exactly where your vulnerabilities are before attackers find them.
           </motion.p>
 
           {/* Stats row */}
@@ -211,37 +209,27 @@ export const LandingHeroSection = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.75, ease: "easeOut" }}
           >
-            <motion.button
-              onClick={() => navigate("/auth/signup")}
-              className="h-[48px] md:h-[52px] gap-2 px-6 md:px-8 rounded-full bg-[linear-gradient(153deg,rgba(255,200,87,1)_0%,rgba(255,138,60,1)_35%,rgba(255,62,196,1)_80%,rgba(255,0,64,1)_100%)] flex items-center relative overflow-hidden cursor-pointer border-0 shadow-[0px_0px_30px_#ff7828a6]"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            <PrimaryButton
+              whereTo="auth/signup"
+              icon={<img className="w-4 h-4 ml-1" alt="" src="/figmaAssets/frame.svg" />}
+              iconPosition="right"
+              moreClasses="h-[48px] md:h-[52px] !px-6 md:!px-8 font-['Plus_Jakarta_Sans',Helvetica]"
             >
-              <div className="absolute left-[calc(50%+100px)] -bottom-8 w-[120px] h-6 bg-[#fb00ff] rounded-[60px/12px] blur-[15px]" />
-              <span className="relative font-['Plus_Jakarta_Sans',Helvetica] font-semibold text-[#333] text-sm md:text-base">
-                Run Full Scan
-              </span>
-              <img className="relative w-4 h-4" alt="" src="/figmaAssets/frame.svg" />
-            </motion.button>
+              Run Full Scan
+            </PrimaryButton>
 
-            <motion.button
-              onClick={() => navigate("/leaderboard")}
-              className="h-[48px] md:h-[52px] px-6 md:px-8 rounded-[48px] bg-[#00000001] flex items-center cursor-pointer border border-[#fd7eff] shadow-[0px_0px_6px_#00000026,inset_0_1px_0_rgba(255,255,255,0.40)] backdrop-blur-[2px]"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            <SecondaryButton
+              whereTo="leaderboard"
+              moreClasses="h-[48px] md:h-[52px] !px-6 md:!px-8 font-['Plus_Jakarta_Sans',Helvetica]"
             >
-              <span className="font-['Plus_Jakarta_Sans',Helvetica] font-medium text-white text-sm md:text-base">
-                View Leaderboard
-              </span>
-            </motion.button>
+              View Leaderboard
+            </SecondaryButton>
           </motion.div>
         </div>
 
         {/* ── RIGHT: animated code scan → score ──────────────────────────── */}
         <motion.div
-          className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4"
+          className="flex-1 min-w-0 w-full lg:w-auto flex flex-col gap-4 lg:-mt-20"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
@@ -325,11 +313,10 @@ export const LandingHeroSection = () => {
 
                   {/* Code text with optional warning highlight */}
                   <span
-                    className={`flex-1 transition-colors duration-500 whitespace-nowrap ${
-                      line.warn && phase >= 1
+                    className={`flex-1 transition-colors duration-500 whitespace-nowrap ${line.warn && phase >= 1
                         ? "bg-[#fd003118] rounded px-1 -mx-1"
                         : ""
-                    }`}
+                      }`}
                     style={{ color: line.color || "transparent" }}
                   >
                     {line.code || "\u00A0"}

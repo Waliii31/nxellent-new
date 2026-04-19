@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
-import { useLeaderboardProjects } from "../../../hooks/api/useProjects";
+import { useLeaderboardProjects, usePublicProjects } from "../../../hooks/api/useProjects";
 import type { ProjectResponseDto } from "../../../types/project";
 import ProjectRow from "../../ui/ProjectRow";
 
@@ -59,52 +59,6 @@ const featureCards = [
   },
 ];
 
-// Stats bar data
-const statsData = [
-  {
-    icon: "/figmaAssets/container-3.svg",
-    iconW: "w-[50px] md:w-[76.36px]",
-    iconH: "h-[44px] md:h-[66.02px]",
-    label: "Avg Score",
-    value: "5.2",
-    valueSize: "text-xl md:text-[29.7px]",
-    hasBorder: true,
-    flex: "flex-1 grow",
-  },
-  {
-    icon: "/figmaAssets/container.svg",
-    iconW: "w-[50px] md:w-[76.36px]",
-    iconH: "h-[50px] md:h-[76.36px]",
-    label: "% Gold / Platinum",
-    value: "67%",
-    valueSize: "text-xl md:text-[29.7px]",
-    hasBorder: true,
-    flex: "flex-1 grow",
-  },
-  {
-    icon: "/figmaAssets/container-2.svg",
-    iconW: "w-[50px] md:w-[76.36px]",
-    iconH: "h-[50px] md:h-[76.36px]",
-    label: "Biggest Riser",
-    value: "DAO Governance (+15)",
-    valueSize: "text-sm md:text-xl",
-    hasBorder: true,
-    flex: "flex-[0_0_auto]",
-    extraPr: "pr-4 md:pr-10",
-  },
-  {
-    icon: "/figmaAssets/container-1.svg",
-    iconW: "w-[50px] md:w-[76.36px]",
-    iconH: "h-[50px] md:h-[76.36px]",
-    label: "New This Week",
-    value: "2",
-    valueSize: "text-xl md:text-[29.7px]",
-    hasBorder: false,
-    flex: "flex-1 grow",
-  },
-];
-
-
 
 // Reusable fade-up variant
 const fadeUp = {
@@ -145,6 +99,82 @@ export const LandingValueAndLeaderboardSection = () => {
     }
     return [];
   }, [projectsData]);
+
+  const { data: publicProjects = [] } = usePublicProjects();
+
+  const dynamicStatsData = useMemo(() => {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+    const validPublicProjects = Array.isArray(publicProjects) ? publicProjects : [];
+
+    const newThisWeek = validPublicProjects.filter(
+      (p: any) => new Date(p.createdAt || Date.now()) >= oneWeekAgo
+    ).length;
+
+    const getScore = (p: any) => Number(p.scoringDetails?.overall || p.currentScores?.overall?.overall || p.currentScores?.contract?.overall || 0);
+
+    const projectsWithScores = validPublicProjects.filter((p: any) => getScore(p) > 0);
+
+    let avgScore = "0.0";
+    let goldPlatinumPercent = "0%";
+    let topRated = "N/A";
+
+    if (projectsWithScores.length > 0) {
+      const totalScore = projectsWithScores.reduce((acc, p) => acc + getScore(p), 0);
+      avgScore = (totalScore / projectsWithScores.length).toFixed(1);
+
+      const highTierCount = projectsWithScores.filter((p) => getScore(p) >= 75).length;
+      goldPlatinumPercent = Math.round((highTierCount / projectsWithScores.length) * 100) + "%";
+
+      const topProject = projectsWithScores.reduce((prev, curr) => (getScore(prev) > getScore(curr) ? prev : curr));
+      topRated = `${topProject.name} (${Math.round(getScore(topProject))})`;
+    }
+
+    return [
+      {
+        icon: "/figmaAssets/container-3.svg",
+        iconW: "w-[50px] md:w-[76.36px]",
+        iconH: "h-[44px] md:h-[66.02px]",
+        label: "Avg Score",
+        value: avgScore,
+        valueSize: "text-xl md:text-[29.7px]",
+        hasBorder: true,
+        flex: "flex-1 grow",
+      },
+      {
+        icon: "/figmaAssets/container.svg",
+        iconW: "w-[50px] md:w-[76.36px]",
+        iconH: "h-[50px] md:h-[76.36px]",
+        label: "% Gold / Platinum",
+        value: goldPlatinumPercent,
+        valueSize: "text-xl md:text-[29.7px]",
+        hasBorder: true,
+        flex: "flex-1 grow",
+      },
+      {
+        icon: "/figmaAssets/container-2.svg",
+        iconW: "w-[50px] md:w-[76.36px]",
+        iconH: "h-[50px] md:h-[76.36px]",
+        label: "Top Rated",
+        value: topRated,
+        valueSize: "text-sm md:text-xl",
+        hasBorder: true,
+        flex: "flex-[0_0_auto]",
+        extraPr: "pr-4 md:pr-10",
+      },
+      {
+        icon: "/figmaAssets/container-1.svg",
+        iconW: "w-[50px] md:w-[76.36px]",
+        iconH: "h-[50px] md:h-[76.36px]",
+        label: "New This Week",
+        value: newThisWeek.toString(),
+        valueSize: "text-xl md:text-[29.7px]",
+        hasBorder: false,
+        flex: "flex-1 grow",
+      },
+    ];
+  }, [publicProjects]);
 
   const topProjects = useMemo(() => {
     return safeProjects
@@ -309,7 +339,7 @@ export const LandingValueAndLeaderboardSection = () => {
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.55, ease: "easeOut" }}
         >
-          {statsData.map((stat, index) => (
+          {dynamicStatsData.map((stat, index) => (
             <motion.div
               key={index}
               className={`flex h-auto md:h-[77.95px] items-center gap-3 md:gap-5 pl-2 md:pl-[25.98px] ${stat.extraPr ?? "pr-0"} py-2 md:py-0 relative ${stat.flex} min-w-[140px] ${stat.hasBorder ? "md:border-r-[1.08px] md:[border-right-style:solid] md:border-[#31415780]" : ""}`}

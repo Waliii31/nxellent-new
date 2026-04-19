@@ -1,9 +1,18 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Footer: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLinkClick = (href: string) => {
+    if (href === "/#faq" && location.pathname === "/") {
+      document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      navigate(href);
+    }
+  };
 
   return (
     <>
@@ -17,7 +26,7 @@ const Footer: React.FC = () => {
         {/* Left: Brand info */}
         <div className="relative flex-1 flex flex-col gap-0">
           <div className="flex items-center">
-            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-6 md:h-10 w-auto object-contain" />
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-5 md:h-7 w-auto object-contain" />
           </div>
           <div className="mt-[24px] max-w-[452px] flex items-center font-['Alexandria',Helvetica] font-light text-white text-sm md:text-base tracking-[0] leading-[normal]">
             Instant cyber due diligence for your code. Security scoring for the audit-ready age.
@@ -29,7 +38,7 @@ const Footer: React.FC = () => {
 
         {/* Right: Nav links */}
         <nav className="inline-flex flex-col items-start gap-6 md:gap-10 relative flex-[0_0_auto]">
-          {[{ label: "Leaderboard", href: "/leaderboard" }, { label: "How It Works", href: "/how-it-works" }, { label: "Pricing", href: "/pricing" }].map((link, index) => (
+          {[{ label: "FAQ", href: "/#faq" }, { label: "How It Works", href: "/how-it-works" }, { label: "Pricing", href: "/pricing" }].map((link, index) => (
             <motion.div
               key={index}
               className="inline-flex flex-col items-start justify-center gap-8 relative flex-[0_0_auto]"
@@ -41,7 +50,7 @@ const Footer: React.FC = () => {
               <div className="flex items-center gap-2 relative self-stretch w-full flex-[0_0_auto]">
                 <div
                   className="relative flex items-center w-fit -mt-px font-['Alexandria',Helvetica] font-normal text-white text-base tracking-[0] leading-[normal] cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => navigate(link.href)}
+                  onClick={() => handleLinkClick(link.href)}
                 >
                   {link.label}
                 </div>

@@ -71,11 +71,11 @@ const TopProjects: React.FC = () => {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20">
               <Loader2 className="w-10 h-10 text-[#FFC2C8] animate-spin mb-4" />
-              <p className="text-white/60 urbanist">Loading top projects...</p>
+              <p className="text-white/60 urbanist">Getting the best projects ready…</p>
             </div>
           ) : isError ? (
             <div className="text-center py-20">
-              <p className="text-red-400 urbanist">Failed to load projects</p>
+              <p className="text-red-400 urbanist">We couldn’t load the leaderboard. Try refreshing.</p>
             </div>
           ) : topProjects.length === 0 ? (
             <div className="text-center py-20">
@@ -98,7 +98,7 @@ const TopProjects: React.FC = () => {
                   score={score}
                   tier={getTier(score)}
                   timeAgo={getTimeAgo(timeAgoDate)}
-                    contractScore={contractScore}
+                  contractScore={contractScore}
                   applicationScore={applicationScore}
                   coverage={p.coverage || p.scoringDetails?.coverage || 0}
                   totalIssues={p.totalIssues || 0}

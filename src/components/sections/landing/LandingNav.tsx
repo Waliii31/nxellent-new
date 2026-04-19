@@ -26,7 +26,7 @@ export const LandingNav = () => {
           to="/"
           className="cursor-pointer hover:opacity-90 transition-opacity flex items-center"
         >
-          <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-6 md:h-10 w-auto object-contain" />
+          <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-4 md:h-6 w-auto object-contain" />
         </Link>
 
         {/* Desktop: nav links + action buttons */}
@@ -44,7 +44,7 @@ export const LandingNav = () => {
                   to={link.href}
                   className={`font-['Plus_Jakarta_Sans',Helvetica] font-medium text-base tracking-[0] leading-[normal] transition-all cursor-pointer ${
                     location.pathname === link.href
-                      ? "text-[#dc0afa]"
+                      ? "text-transparent bg-clip-text bg-[linear-gradient(153deg,#ffc857,#ff8a3c_45%,#ff3ec4)]"
                       : "text-white hover:opacity-75"
                   }`}
                 >
@@ -91,17 +91,17 @@ export const LandingNav = () => {
           aria-label="Toggle menu"
         >
           <motion.span
-            className="block w-6 h-[2px] bg-white rounded-full"
+            className="block w-6 h-0.5 bg-white rounded-full"
             animate={mobileOpen ? { rotate: 45, y: 5.5 } : { rotate: 0, y: 0 }}
             transition={{ duration: 0.25 }}
           />
           <motion.span
-            className="block w-6 h-[2px] bg-white rounded-full"
+            className="block w-6 h-0.5 bg-white rounded-full"
             animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
             transition={{ duration: 0.15 }}
           />
           <motion.span
-            className="block w-6 h-[2px] bg-white rounded-full"
+            className="block w-6 h-0.5 bg-white rounded-full"
             animate={mobileOpen ? { rotate: -45, y: -5.5 } : { rotate: 0, y: 0 }}
             transition={{ duration: 0.25 }}
           />
@@ -131,7 +131,7 @@ export const LandingNav = () => {
                   onClick={() => setMobileOpen(false)}
                   className={`font-['Plus_Jakarta_Sans',Helvetica] font-semibold text-2xl tracking-[0] leading-[normal] transition-all cursor-pointer ${
                     location.pathname === link.href
-                      ? "text-[#dc0afa]"
+                      ? "text-transparent bg-clip-text bg-[linear-gradient(153deg,#ffc857,#ff8a3c_45%,#ff3ec4)]"
                       : "text-white hover:opacity-75"
                   }`}
                 >
@@ -152,7 +152,7 @@ export const LandingNav = () => {
 
               <button
                 onClick={() => { navigate("/auth/signup"); setMobileOpen(false); }}
-                className="relative flex w-[169px] h-[48px] items-center justify-center px-6 py-2.5 rounded-full overflow-hidden shadow-[0px_0px_24px_#ff8c3c8c] bg-[linear-gradient(153deg,rgba(255,200,87,1)_0%,rgba(255,138,60,1)_45%,rgba(255,62,196,1)_100%)] cursor-pointer border-0"
+                className="relative flex w-[169px] h-12 items-center justify-center px-6 py-2.5 rounded-full overflow-hidden shadow-[0px_0px_24px_#ff8c3c8c] bg-[linear-gradient(153deg,rgba(255,200,87,1)_0%,rgba(255,138,60,1)_45%,rgba(255,62,196,1)_100%)] cursor-pointer border-0"
               >
                 <span className="font-['Plus_Jakarta_Sans',Helvetica] font-semibold text-[#333] text-base">
                   Get started

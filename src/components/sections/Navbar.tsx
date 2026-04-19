@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Menu, X, Bell, ChevronDown } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import PrimaryButton from "../ui/PrimaryButton"
@@ -21,7 +21,22 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const navigate = useNavigate()
+  const location = useLocation()
   const token = useSelector((s: RootState) => s.auth.token)
+
+  const getLinkClasses = (path: string) => {
+    return location.pathname === path
+      ? "text-transparent bg-clip-text bg-[linear-gradient(153deg,#ffc857,#ff8a3c_45%,#ff3ec4)] transition"
+      : "hover:text-gray-300 transition"
+  }
+
+  const handleFaqClick = (e: React.MouseEvent) => {
+    if (location.pathname === "/") {
+      e.preventDefault()
+      document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" })
+      setMenuOpen(false)
+    }
+  }
 
   // Get unread notifications count
   const unreadQuery = useUnreadCount({ enabled: !!token })
@@ -77,36 +92,36 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
             : "bg-transparent"
           }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-6">
+        <div className="w-full h-[88px] flex items-center justify-between px-5 sm:px-10 md:px-16 lg:px-[120px]">
 
           {/* Logo */}
           <h1
             onClick={() => navigate("/")}
             className="text-white font-extrabold cursor-pointer text-2xl tracking-wide flex items-center"
           >
-            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-6 md:h-10 w-auto object-contain" />
+            <img src="/Nxellent-logos/desktop_logo_SVG_160x50.svg" alt="Nxellent Logo" className="h-4 md:h-7 w-auto object-contain" />
           </h1>
 
           {/* Desktop Links */}
           <ul className="hidden min-[1050px]:flex items-center space-x-10 text-white text-[15px] font-medium">
             <li>
-              <Link to="/leaderboard" className="hover:text-gray-300 transition">
-                Leaderboard
+              <Link to="/#faq" onClick={handleFaqClick} className={getLinkClasses("/#faq")}>
+                FAQ
               </Link>
             </li>
             <li>
-              <Link to="/how-it-works" className="hover:text-gray-300 transition">
+              <Link to="/how-it-works" className={getLinkClasses("/how-it-works")}>
                 How It Works
               </Link>
             </li>
             <li>
-              <Link to="/pricing" className="hover:text-gray-300 transition">
+              <Link to="/pricing" className={getLinkClasses("/pricing")}>
                 Pricing
               </Link>
             </li>
             {token && (
               <li>
-                <Link to="/projects/my-projects" className="hover:text-gray-300 transition">
+                <Link to="/projects/my-projects" className={getLinkClasses("/projects/my-projects")}>
                   My Projects
                 </Link>
               </li>
@@ -188,7 +203,11 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
             {token ? (
               <SecondaryButton children="Scan Project" whereTo="scanner" />
             ) : (
-              <SecondaryButton children="Leaderboard" whereTo="leaderboard" />
+              <SecondaryButton 
+                children="Leaderboard" 
+                whereTo="leaderboard"
+                moreClasses={location.pathname === "/leaderboard" ? "bg-gradient-to-r from-[#ffc857] to-[#ff3ec4] border-[#ffc857] text-[#020C30] font-bold shadow-lg shadow-[#ffc857]/40" : ""}
+              />
             )}
 
             {token ? (
@@ -253,17 +272,17 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
                 className="h-full w-full flex flex-col justify-center items-center gap-8 text-white"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Link to="/leaderboard" className="text-2xl font-medium hover:text-gray-300">
-                  Leaderboard
+                <Link to="/#faq" onClick={handleFaqClick} className={`text-2xl font-medium ${getLinkClasses("/#faq")}`}>
+                  FAQ
                 </Link>
-                <Link to="/how-it-works" className="text-2xl font-medium hover:text-gray-300">
+                <Link to="/how-it-works" onClick={() => setMenuOpen(false)} className={`text-2xl font-medium ${getLinkClasses("/how-it-works")}`}>
                   How It Works
                 </Link>
-                <Link to="/pricing" className="text-2xl font-medium hover:text-gray-300">
+                <Link to="/pricing" onClick={() => setMenuOpen(false)} className={`text-2xl font-medium ${getLinkClasses("/pricing")}`}>
                   Pricing
                 </Link>
                 {token && (
-                  <Link to="/projects/my-projects" className="text-2xl font-medium hover:text-gray-300">
+                  <Link to="/projects/my-projects" onClick={() => setMenuOpen(false)} className={`text-2xl font-medium ${getLinkClasses("/projects/my-projects")}`}>
                     My Projects
                   </Link>
                 )}
@@ -320,7 +339,13 @@ export default function Navbar({ isFixed = true }: NavbarProps) {
 
                 <div className="mt-2 flex flex-col items-center gap-4 w-11/12 max-w-sm">
                   {/* Mobile Notification Button */}
-                  <SecondaryButton>Leaderboard</SecondaryButton>
+                  <SecondaryButton 
+                    whereTo="leaderboard"
+                    moreClasses={location.pathname === "/leaderboard" ? "bg-gradient-to-r from-[#ffc857] to-[#ff3ec4] border-[#ffc857] text-[#020C30] font-bold shadow-lg shadow-[#ffc857]/40 w-full" : "w-full"}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Leaderboard
+                  </SecondaryButton>
                   {token && (
                     <button
                       onClick={() => {

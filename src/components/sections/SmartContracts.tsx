@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Search, Trophy, FileText, Code, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { useLeaderboardProjects } from "../../hooks/api/useProjects";
 import type { ProjectResponseDto } from "../../types/project";
 
@@ -182,133 +183,240 @@ const SmartContracts: React.FC = () => {
   const actualTotalPages = Math.max(1, projectsData?.meta?.totalPages || projectsData?.totalPages || Math.ceil(filteredProjects.length / limit));
 
   return (
-    <section className="relative w-full text-white py-10 sm:py-14 md:py-16 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto w-full">
-        <div className="flex z-10 items-center justify-center w-full py-6 md:py-10 px-2 sm:px-0">
-          <div className="flex items-center w-full md:w-auto p-1 rounded-full bg-[#0B0B2A] border border-[#272744] overflow-x-auto no-scrollbar">
+    <section className="relative w-full text-white py-16 sm:py-20 md:py-24 px-5 sm:px-10 md:px-16 lg:px-[120px] overflow-hidden">
+      {/* Animated background elements */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{ backgroundImage: "radial-gradient(circle, rgba(140,80,255,0.05) 1px, transparent 1px)", backgroundSize: "50px 50px" }}
+        animate={{ opacity: [0.2, 0.35, 0.2] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="max-w-7xl mx-auto w-full relative z-10">
+        
+        {/* Section Header with animation */}
+        <motion.div
+          className="mb-12 text-center"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
+            <span style={{
+              background: "linear-gradient(90deg, rgba(255,200,87,1) 0%, rgba(255,62,196,1) 50%, rgba(140,80,255,1) 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}>
+              Top Rated Projects
+            </span>
+          </h2>
+          <p className="text-white/60 text-sm sm:text-base">Explore the most secure and audited projects</p>
+        </motion.div>
+
+        {/* Tabs with animations */}
+        <motion.div
+          className="flex z-10 items-center justify-center w-full py-6 md:py-8 px-2 sm:px-0 mb-10"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: "easeOut" }}
+        >
+          <div className="flex items-center w-full md:w-auto p-1.5 rounded-full bg-linear-to-r from-[#0B0B2A] to-[#1A1A3A] border border-[#7A49F2]/20 overflow-x-auto no-scrollbar shadow-lg shadow-[#7A49F2]/10">
             {[
               { id: "All", label: "Overall", icon: Trophy },
               { id: "Defi", label: "Smart Contracts", icon: FileText },
               { id: "App", label: "Applications", icon: Code },
-            ].map((tab) => (
-              <button
+            ].map((tab, index) => (
+              <motion.button
                 key={tab.id}
                 onClick={() => setCategory(tab.id)}
-                className={`flex items-center justify-center flex-1 md:flex-none whitespace-nowrap gap-2 px-3 sm:px-8 py-3 sm:py-4 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 ${category === tab.id
-                  ? "bg-[#7A49F2] text-white shadow-lg shadow-[#7A49F2]/25"
-                  : "text-white/60 hover:text-white hover:bg-white/5"
-                  }`}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ delay: 0.1 + index * 0.05 }}
+                className={`flex items-center justify-center flex-1 md:flex-none whitespace-nowrap gap-2 px-4 sm:px-8 py-3 sm:py-4 rounded-full text-xs sm:text-sm font-semibold transition-all duration-300 ${
+                  category === tab.id
+                    ? "bg-[linear-gradient(90deg,#FFC857_0%,#FF8A3C_35%,#FF3EC4_80%,#FF0040_100%)] text-[#333333] shadow-lg shadow-[#A501FF]/40"
+                    : "text-white/70 hover:text-white hover:bg-white/5"
+                }`}
               >
-                <tab.icon size={16} />
+                <tab.icon size={18} />
                 <span className="hidden sm:inline">{tab.label}</span>
                 <span className="sm:hidden">{tab.label === "Smart Contracts" ? "Contracts" : tab.label}</span>
-              </button>
+              </motion.button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 md:gap-6 mb-4 px-3 sm:px-0">
-          <div
-            className="flex items-center justify-center gap-2 w-full lg:max-w-md px-4 py-2.5 rounded-[40px] border border-[#272744] bg-[#0B0B2A] text-sm shadow-[0_0_6px_rgba(0,0,0,0.25)] focus-within:ring-2 focus-within:ring-[#A501FF]"
+        {/* Filters Section */}
+        <motion.div
+          className="flex flex-col gap-6 mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+        >
+          {/* Search Bar */}
+          <motion.div
+            className="w-full"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3 }}
           >
-            <Search size={14} />
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search projects, IDs, repos..."
-              className="w-full jakarta bg-transparent outline-none placeholder:text-white/60 text-white"
-            />
-          </div>
+            <div className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-2xl border border-[#7A49F2]/30 bg-linear-to-r from-[#0B0B2A]/50 to-[#1A1A3A]/50 text-sm shadow-lg shadow-[#7A49F2]/5 focus-within:ring-2 focus-within:ring-[#A501FF] focus-within:border-[#A501FF] transition-all duration-300 backdrop-blur-sm">
+              <motion.div animate={{ rotate: [0, 360] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }}>
+                <Search size={18} className="text-[#A501FF]" />
+              </motion.div>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search projects, IDs, repos..."
+                className="w-full bg-transparent outline-none placeholder:text-white/50 text-white text-sm"
+              />
+            </div>
+          </motion.div>
 
-          <div className="flex items-center gap-2 flex-wrap justify-center w-full lg:w-auto">
-            {["All Time", "24h", "7d", "30d"].map((t) => (
-              <button
-                key={t}
-                onClick={() => setTime(t)}
-                className={`px-4 sm:px-8 py-2 font-semibold rounded-full text-xs sm:text-sm transition-colors border whitespace-nowrap
-                  ${time === t
-                    ? "bg-[#7A49F2] border-[#A274FF] text-white"
-                    : "bg-[#0B0B2A] border-[#272744] text-white/80 hover:bg-[#101040]"
-                  }
-                `}
-              >
-                {t}
-              </button>
-            ))}
-            <button
+          {/* Time Filters and Sort */}
+          <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4">
+            <div className="flex items-center gap-2 flex-wrap justify-center md:justify-start w-full">
+              {["All Time", "24h", "7d", "30d"].map((t, idx) => (
+                <motion.button
+                  key={t}
+                  onClick={() => setTime(t)}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  transition={{ delay: 0.1 + idx * 0.05 }}
+                  className={`px-4 sm:px-6 py-2.5 font-semibold rounded-full text-xs sm:text-sm transition-all border whitespace-nowrap ${
+                    time === t
+                      ? "bg-linear-to-r from-[#ffc857] to-[#ff7e2a] border-[#ffc857] text-[#020C30] shadow-lg shadow-[#ffc857]/30"
+                      : "bg-[#0B0B2A] border-[#272744] text-white/80 hover:border-[#7A49F2] hover:bg-[#101040]"
+                  }`}
+                >
+                  {t}
+                </motion.button>
+              ))}
+            </div>
+
+            <motion.button
               onClick={() => setSortHighLow((s) => !s)}
-              className="rounded-full px-4 py-2 text-xs sm:text-sm border border-[#7A49F2] bg-[#05052A] hover:bg-[#0B0B3A] transition-colors whitespace-nowrap"
+              whileHover={{ scale: 1.05, y: -2 }}
+              className="rounded-full px-6 py-2.5 text-xs sm:text-sm border border-[#ff3ec4]/50 bg-linear-to-r from-[#ff3ec4]/10 to-[#A501FF]/10 hover:from-[#ff3ec4]/20 hover:to-[#A501FF]/20 text-white font-semibold transition-all whitespace-nowrap shadow-lg shadow-[#ff3ec4]/20"
             >
               {sortHighLow ? "Score (High–Low)" : "Score (Low–High)"}
-            </button>
+            </motion.button>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="max-w-7xl mx-auto mb-4 px-3 sm:px-0">
+        {/* KPI Stats Bar */}
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, delay: 0.3, ease: "easeOut" }}
+        >
           <KPIStatsBar />
-        </div>
+        </motion.div>
 
+        {/* Error Message */}
         {projectsError && (
-          <p className="text-red-300 text-sm mb-4">Failed to load leaderboard. Please try again.</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-red-400 text-sm mb-4 flex items-center gap-2"
+          >
+            <span className="w-2 h-2 rounded-full bg-red-400" />
+            Failed to load leaderboard. Please try again.
+          </motion.p>
         )}
 
-        <div className="flex flex-col gap-4">
-          {(loadingProjects) && (
-            <p className="text-white/70 text-sm">Loading leaderboard…</p>
+        {/* Projects List */}
+        <motion.div
+          className="flex flex-col gap-4"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, delay: 0.4 }}
+        >
+          {loadingProjects && (
+            <motion.div className="flex items-center justify-center py-12" animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 2, repeat: Infinity }}>
+              <p className="text-white/70 text-sm">Loading top projects…</p>
+            </motion.div>
           )}
           {!loadingProjects && paginatedProjects.length === 0 && (
-            <p className="text-white/70 text-sm">No projects match your filters yet.</p>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-12"
+            >
+              <p className="text-white/70 text-sm">No projects match your filters yet.</p>
+            </motion.div>
           )}
-          {paginatedProjects.map((p) => (
-            <ProjectRow
+          {paginatedProjects.map((p, idx) => (
+            <motion.div
               key={`${p.name}-${p.rank}`}
-              rank={p.rank}
-              name={p.name}
-              category={p.category}
-              score={p.score}
-              tier={p.tier}
-              timeAgo={p.timeAgo}
-              change={p.change}
-              // Pass new metrics
-              contractScore={p.contractScore}
-              applicationScore={p.applicationScore}
-              coverage={p.coverage}
-              totalIssues={p.totalIssues}
-              criticalIssues={p.criticalIssues}
-              shieldRank={p.shieldRank}
-              hasContract={p.hasContract}
-              hasApplication={p.hasApplication}
-            />
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: idx * 0.05 }}
+            >
+              <ProjectRow
+                rank={p.rank}
+                name={p.name}
+                category={p.category}
+                score={p.score}
+                tier={p.tier}
+                timeAgo={p.timeAgo}
+                change={p.change}
+                contractScore={p.contractScore}
+                applicationScore={p.applicationScore}
+                coverage={p.coverage}
+                totalIssues={p.totalIssues}
+                criticalIssues={p.criticalIssues}
+                shieldRank={p.shieldRank}
+                hasContract={p.hasContract}
+                hasApplication={p.hasApplication}
+              />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Load More & Pagination Section */}
         {filteredProjects.length > 0 && (
-          <div className="mt-10 flex flex-col items-center gap-8 w-full max-w-4xl mx-auto px-2">
+          <motion.div
+            className="mt-12 flex flex-col items-center gap-8 w-full max-w-4xl mx-auto px-2"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+          >
             
             {/* Load More Projects */}
             {filteredProjects.length > limit && limit < 12 && (
-              <button
+              <motion.button
                 onClick={() => setLimit((l) => l + 4)}
-                className="flex items-center gap-2 px-8 py-3 rounded-full border border-[#272744] bg-[#0B0B2A] text-white/90 font-medium hover:bg-[#101040] hover:text-white transition-all shadow-[0_4px_14px_0_rgba(0,0,0,0.25)]"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-8 py-3.5 rounded-full border border-[#7A49F2]/50 bg-linear-to-r from-[#7A49F2]/10 to-[#A501FF]/10 hover:from-[#7A49F2]/20 hover:to-[#A501FF]/20 text-white/90 font-semibold hover:text-white transition-all shadow-lg shadow-[#7A49F2]/20"
               >
                 Load More Projects
-                <ChevronDown size={16} className="text-white/60" />
-              </button>
+                <ChevronDown size={18} className="text-white/70" />
+              </motion.button>
             )}
 
             {/* Pagination Bar */}
-            <div className="flex flex-col md:flex-row items-center justify-between w-full p-2 sm:p-3 rounded-3xl border border-[#272744] bg-[#05051E] gap-4">
+            <div className="flex flex-col md:flex-row items-center justify-between w-full p-4 rounded-3xl border border-[#7A49F2]/20 bg-linear-to-r from-[#05051E]/50 to-[#0B0B2A]/50 gap-4 backdrop-blur-sm shadow-lg shadow-[#7A49F2]/10">
               
               {/* Pages */}
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <button
+              <div className="flex items-center gap-2">
+                <motion.button
                   onClick={() => { setPage((p) => Math.max(1, p - 1)); setLimit(8); }}
                   disabled={page === 1}
-                  className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#272744] bg-transparent text-white/70 hover:bg-[#1A1A32] disabled:opacity-50 transition-all font-medium"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  className="flex items-center justify-center w-10 h-10 rounded-lg border border-[#7A49F2]/40 bg-linear-to-br from-[#1A1A32] to-[#0B0B2A] text-white/70 hover:text-white hover:border-[#A501FF] hover:bg-linear-to-br hover:from-[#2A1A3A] hover:to-[#1A0B2A] disabled:opacity-50 transition-all font-semibold"
                 >
-                  <ChevronLeft size={16} />
-                </button>
+                  <ChevronLeft size={18} />
+                </motion.button>
 
                 {(() => {
                   const getPageNumbers = () => {
@@ -322,41 +430,45 @@ const SmartContracts: React.FC = () => {
                   return getPageNumbers().map((pNum, index) => {
                     if (pNum === "...") {
                       return (
-                        <span key={`ellipsis-${index}`} className="text-white/50 px-1 sm:px-2 tracking-widest text-sm">
+                        <span key={`ellipsis-${index}`} className="text-white/50 px-2 tracking-widest text-sm">
                           ...
                         </span>
                       );
                     }
                     const isActive = page === pNum;
                     return (
-                      <button
+                      <motion.button
                         key={`page-${pNum}`}
                         onClick={() => { setPage(typeof pNum === "number" ? pNum : 1); setLimit(8); }}
-                        className={`flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl font-medium transition-all text-sm ${
+                        whileHover={{ scale: 1.08, y: -2 }}
+                        whileTap={{ scale: 0.92 }}
+                        className={`flex items-center justify-center w-10 h-10 rounded-lg font-semibold transition-all text-sm ${
                           isActive
-                            ? "bg-[#A501FF] text-white shadow-[0_0_12px_0_rgba(165,1,255,0.4)]"
-                            : "border border-[#272744] bg-transparent text-white/70 hover:bg-[#1A1A32]"
+                            ? "bg-linear-to-r from-[#A501FF] to-[#7A49F2] text-white shadow-lg shadow-[#A501FF]/50 border border-[#A501FF]"
+                            : "border border-[#272744] bg-linear-to-br from-[#1A1A32] to-[#0B0B2A] text-white/70 hover:text-white hover:border-[#7A49F2] hover:bg-linear-to-br hover:from-[#2A1A3A] hover:to-[#1A0B2A]"
                         }`}
                       >
                         {pNum}
-                      </button>
+                      </motion.button>
                     );
                   });
                 })()}
 
-                <button
+                <motion.button
                   onClick={() => { setPage((p) => Math.min(actualTotalPages, p + 1)); setLimit(8); }}
                   disabled={page === actualTotalPages}
-                  className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-[#272744] bg-transparent text-white/70 hover:bg-[#1A1A32] disabled:opacity-50 transition-all font-medium"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  className="flex items-center justify-center w-10 h-10 rounded-lg border border-[#7A49F2]/40 bg-linear-to-br from-[#1A1A32] to-[#0B0B2A] text-white/70 hover:text-white hover:border-[#A501FF] hover:bg-linear-to-br hover:from-[#2A1A3A] hover:to-[#1A0B2A] disabled:opacity-50 transition-all font-semibold"
                 >
-                  <ChevronRight size={16} />
-                </button>
+                  <ChevronRight size={18} />
+                </motion.button>
               </div>
 
               {/* Jump to position */}
-              <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:ml-auto">
-                <div className="w-px h-8 bg-[#272744] hidden md:block"></div>
-                <span className="text-[#6A6A88] text-[13px] sm:text-sm font-medium whitespace-nowrap">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:ml-auto">
+                <div className="w-full sm:w-px h-px sm:h-8 bg-[#272744]/50 hidden sm:block"></div>
+                <span className="text-[#6A6A88] text-sm font-semibold whitespace-nowrap">
                   Jump to position
                 </span>
                 <form 
@@ -373,28 +485,30 @@ const SmartContracts: React.FC = () => {
                   }}
                   className="flex items-center gap-2"
                 >
-                  <div className="flex items-center h-9 sm:h-10 px-3 rounded-xl border border-[#272744] bg-[#0B0B2A] focus-within:border-[#6A6A88] transition-colors">
-                    <span className="text-[#6A6A88] mr-2 text-sm font-mono">#</span>
+                  <div className="flex items-center h-10 px-3 rounded-lg border border-[#7A49F2]/40 bg-linear-to-r from-[#0B0B2A] to-[#1A1A3A] focus-within:border-[#A501FF] focus-within:shadow-lg focus-within:shadow-[#A501FF]/20 transition-all">
+                    <span className="text-[#6A6A88] mr-2 text-sm font-semibold">#</span>
                     <input
                       type="number"
                       min="1"
                       value={jumpTo}
                       onChange={(e) => setJumpTo(e.target.value)}
-                      className="w-12 sm:w-16 bg-transparent outline-none text-white text-sm"
+                      className="w-14 bg-transparent outline-none text-white text-sm font-mono"
                       placeholder="100"
                     />
                   </div>
-                  <button
+                  <motion.button
                     type="submit"
-                    className="h-9 sm:h-10 px-5 sm:px-6 rounded-xl border border-[#272744] bg-[#1A1A32] hover:bg-[#272744] text-white font-medium transition-all text-[13px] sm:text-sm"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="h-10 px-6 rounded-lg border border-[#7A49F2]/50 bg-linear-to-r from-[#7A49F2]/20 to-[#A501FF]/20 hover:from-[#A501FF] hover:to-[#7A49F2] text-white font-semibold transition-all text-sm shadow-lg shadow-[#A501FF]/20 hover:shadow-[#A501FF]/40"
                   >
                     Go
-                  </button>
+                  </motion.button>
                 </form>
               </div>
 
             </div>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

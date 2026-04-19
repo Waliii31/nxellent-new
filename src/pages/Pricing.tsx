@@ -1,4 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
+import Navbar from "../components/sections/Navbar";
 import CtaSection from "../components/sections/CtaSection";
 import Footer from "../components/sections/Footer";
 import PricingHero from "../components/sections/PricingHero";
@@ -39,7 +40,8 @@ const Pricing = () => {
   };
 
   return (
-    <div className="bg-[#020C30]">
+    <div className="bg-[#020C30] overflow-hidden w-full flex flex-col relative">
+      <Navbar />
       <PricingHero />
       <Perspective />
       <FoundersPricing />
