@@ -256,7 +256,7 @@ export const LandingValueAndLeaderboardSection = () => {
           {featureCards.map((card, index) => (
             <motion.div
               key={index}
-              className="relative flex-1 w-full sm:w-auto max-w-[400px] sm:max-w-none h-auto sm:h-[480px] md:h-[543px] p-[2px] rounded-[20px]"
+              className="relative flex-1 w-full sm:w-auto max-w-[400px] sm:max-w-none h-auto sm:h-[480px] md:h-[543px] p-0.5 rounded-[20px]"
               custom={index}
               variants={fadeUp}
               initial="hidden"
@@ -373,7 +373,7 @@ export const LandingValueAndLeaderboardSection = () => {
           {isLoading ? (
             <p className="text-white/70 text-sm text-center py-6">Loading leaderboard…</p>
           ) : topProjects.length === 0 ? (
-            <p className="text-white/70 text-sm text-center py-6">No projects match your filters yet.</p>
+            <p className="text-white/70 text-sm text-center py-6">No public scans in the leaderboard yet</p>
           ) : (
             topProjects.map((p, index) => (
               <motion.div
