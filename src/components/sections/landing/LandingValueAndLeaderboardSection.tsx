@@ -178,23 +178,76 @@ export const LandingValueAndLeaderboardSection = () => {
 
   const topProjects = useMemo(() => {
     return safeProjects
-      .map((p: ProjectResponseDto) => {
+      .map((p: ProjectResponseDto | any) => {
+        // Aggressively check every possible field name for the score (both camelCase and snake_case)
         const score = Number(p.scoringDetails?.overall) ||
+          Number(p.overallScore) ||
+          Number(p.overall_score) ||
+          Number(p.latestContractScan?.scores?.overall) ||
+          Number(p.latestApplicationScan?.scores?.overall) ||
+          Number(p.contractScore) ||
+          Number(p.applicationScore) ||
+          Number(p.contract_score) ||
+          Number(p.application_score) ||
           Number(p.currentScores?.overall?.overall) ||
-          Number(p.currentScores?.contract?.overall) ||
-          Number(p.currentScores?.application?.overall) ||
+          Number(p.currentScores?.overall?.score) ||
+          Number(p.score) ||
           0;
-        const shieldRank = p.scoringDetails?.shieldRank || "";
-        const lastUpdated = p.updatedAt || p.createdAt;
-        const contractScore = Number(p.scoringDetails?.contractTrack?.subscore) || 0;
-        const applicationScore = Number(p.scoringDetails?.applicationTrack?.subscore) || 0;
-        const coverage = Number(p.scoringDetails?.coverage) || 0;
+
+        const shieldRank = p.scoringDetails?.shieldRank || 
+          p.shield_rank ||
+          p.latestContractScan?.shieldRank || 
+          p.latestApplicationScan?.shieldRank || 
+          p.shieldRank || "";
+
+        // Track-specific scores
+        const contractScore = Number(p.scoringDetails?.contractTrack?.subscore) ||
+          Number(p.latestContractScan?.scores?.overall) || 
+          Number(p.contractScore) ||
+          Number(p.contract_score) || 0;
+
+        const applicationScore = Number(p.scoringDetails?.applicationTrack?.subscore) ||
+          Number(p.latestApplicationScan?.scores?.overall) || 
+          Number(p.applicationScore) ||
+          Number(p.application_score) || 0;
+
+        // Last updated timestamp fallbacks
+        const lastUpdated = p.lastUpdated ||
+          p.scoringDetails?.calculatedAt ||
+          p.scoringDetails?.calculated_at ||
+          p.lastScanAt || p.lastScan || p.last_scan_at || p.last_scan ||
+          p.scannedAt || p.scanned_at ||
+          p.updatedAt || p.updated_at ||
+          p.createdAt || p.created_at ||
+          p.latestContractScan?.updatedAt || p.latestApplicationScan?.updatedAt ||
+          p.latestContractScan?.createdAt || p.latestApplicationScan?.createdAt;
+
+        // Coverage fallbacks
+        const coverage = Number(p.scoringDetails?.coverage) ||
+          Number(p.coverage) ||
+          Number(p.latestContractScan?.coverage) ||
+          Number(p.latestApplicationScan?.coverage) || 
+          0;
+
+        // Issue counts fallbacks
         const contractIssues = p.latestContractScan?.issueCounts;
         const appIssues = p.latestApplicationScan?.issueCounts;
-        const totalIssues = (contractIssues?.total || 0) + (appIssues?.total || 0);
-        const criticalIssues = (contractIssues?.critical || 0) + (appIssues?.critical || 0);
-        const hasContract = !!p.latestContractScan || !!p.scoringDetails?.contractTrack;
-        const hasApplication = !!p.latestApplicationScan || !!p.scoringDetails?.applicationTrack;
+        
+        const totalIssues = Number(p.totalIssues) || 
+          Number(p.total_issues) ||
+          Number(p.vulnerabilityCount) ||
+          Number(p.vulnerability_count) ||
+          ((contractIssues?.total || 0) + (appIssues?.total || 0)) ||
+          0;
+
+        const criticalIssues = Number(p.criticalIssues) || 
+          Number(p.critical_issues) ||
+          Number(p.criticalVulnerabilities) ||
+          ((contractIssues?.critical || 0) + (appIssues?.critical || 0)) ||
+          0;
+
+        const hasContract = !!(p.hasContract || p.latestContractScan || p.scoringDetails?.contractTrack || (p.type && String(p.type).toLowerCase().includes('contract')) || p.contractScore);
+        const hasApplication = !!(p.hasApplication || p.latestApplicationScan || p.scoringDetails?.applicationTrack || (p.type && String(p.type).toLowerCase().includes('app')) || p.applicationScore);
 
         return {
           id: p._id || p.id,

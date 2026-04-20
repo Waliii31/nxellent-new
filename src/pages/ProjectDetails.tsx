@@ -29,42 +29,76 @@ import { generateProjectPdf } from "../services/scanService";
 // Sub-components
 // -------------------------
 
-const ScoreRing = ({ score, size = 120, strokeWidth = 8, className = "" }: { score: number; size?: number; strokeWidth?: number; className?: string }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const offset = circumference - (score / 100) * circumference;
+const getScoreTier = (score: number) => {
+    if (score >= 90)
+        return {
+            name: "Platinum",
+            badge: "/platinium-badge.png",
+            textColor: "#1A1B3A"
+        };
+    if (score >= 75)
+        return {
+            name: "Gold",
+            badge: "/gold-badge.png",
+            textColor: "#422800"
+        };
+    if (score >= 60)
+        return {
+            name: "Silver",
+            badge: "/silver-badge.png",
+            textColor: "#2D2D2D"
+        };
+    return {
+        name: "Bronze",
+        badge: "/silver-badge.png", // Fallback
+        textColor: "#431407"
+    };
+};
+
+const ScoreBadge = ({ 
+    score, 
+    size = "w-32 h-32 md:w-48 md:h-48", 
+    className = "", 
+    showLabel = true,
+    variant = "huge"
+}: { 
+    score: number; 
+    size?: string; 
+    className?: string; 
+    showLabel?: boolean;
+    variant?: "huge" | "medium"
+}) => {
+    const tier = getScoreTier(score);
+
+    const scoreSize = variant === "huge" 
+        ? "text-2xl sm:text-4xl md:text-5xl lg:text-6xl" 
+        : "text-xl sm:text-2xl md:text-3xl";
+    
+    const labelSize = variant === "huge"
+        ? "text-[8px] sm:text-[10px] md:text-xs lg:text-sm"
+        : "text-[7px] sm:text-[8px] md:text-[9px]";
 
     return (
-        <div className={`relative flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
-            <svg width={size} height={size} className="transform -rotate-90">
-                <circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke="#383838"
-                    strokeWidth={strokeWidth}
-                    fill="transparent"
-                    className="opacity-20"
-                />
-                <circle
-                    cx={size / 2}
-                    cy={size / 2}
-                    r={radius}
-                    stroke="url(#score-gradient)"
-                    strokeWidth={strokeWidth}
-                    fill="transparent"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={offset}
-                    strokeLinecap="round"
-                    className="transition-all duration-1000 ease-out"
-                />
-                <defs>
-                    <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#BE0178" />
-                        <stop offset="100%" stopColor="#E830E8" />
-                    </linearGradient>
-                </defs>
-            </svg>
+        <div className={`relative flex items-center justify-center shrink-0 ${size} ${className}`}>
+            <img 
+                src={tier.badge} 
+                alt={tier.name} 
+                className="absolute inset-0 w-full h-full object-contain"
+            />
+            <div className="relative z-10 flex flex-col items-center justify-center text-center mt-1 sm:mt-2">
+                <span 
+                    className={`urbanist font-bold leading-none text-white drop-shadow-sm ${scoreSize}`}
+                >
+                    {score}
+                </span>
+                {showLabel && (
+                    <span 
+                        className={`font-medium text-white/90 drop-shadow-sm mt-1 mb-1 sm:mt-2 capitalize ${labelSize}`}
+                    >
+                        {tier.name.toLowerCase()}
+                    </span>
+                )}
+            </div>
         </div>
     );
 };
@@ -98,12 +132,7 @@ const ScoreGroup = ({
     <div className="flex-1 py-5 px-1 sm:px-2 w-full">
         <div className="flex justify-between mb-5 items-center gap-4">
             <h3 className="text-sm sm:text-base urbanist font-semibold">{title}</h3>
-            <div className="relative flex justify-center items-center">
-                <h1 className="absolute inter font-normal text-2xl sm:text-3xl text-center z-10">
-                    {score}
-                </h1>
-                <ScoreRing score={score} size={80} strokeWidth={6} />
-            </div>
+            <ScoreBadge score={score} size="w-16 h-16 sm:w-20 sm:h-20" variant="medium" showLabel={false} />
         </div>
 
         <div className="flex flex-col justify-center items-center gap-3">
@@ -579,22 +608,10 @@ const ProjectDetails: React.FC = () => {
                             <div className="w-full lg:flex-2 space-y-4">
                                 <GlowCard className="flex flex-col sm:flex-row justify-start items-start sm:items-center gap-6 sm:gap-10 lg:gap-20">
                                     {/* Overall Score */}
-                                    <div className="relative flex justify-center items-center min-h-20">
-                                        <div className="absolute text-center z-10 flex flex-col items-center">
-                                            <h1 className="inter font-normal text-4xl sm:text-5xl">
-                                                {overallScore}
-                                            </h1>
-                                            <div className="flex items-center gap-1.5 mt-1">
-                                                <div className="w-5 h-5 sm:w-6 sm:h-6 shrink-0 rounded-lg bg-linear-to-br from-[#FD7EFF]/20 to-[#A855F7]/20 flex items-center justify-center border border-[#FD7EFF]/30">
-                                                    <Shield className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#FFC2C8]" />
-                                                </div>
-                                                <p className="inter font-medium text-[#8B5CF6] text-xs sm:text-sm">
-                                                    {rankLabel}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <ScoreRing score={overallScore} size={160} strokeWidth={10} />
-                                    </div>
+                                    <ScoreBadge 
+                                        score={overallScore} 
+                                        size="w-40 h-40 sm:w-56 sm:h-56 lg:w-64 lg:h-64" 
+                                    />
 
                                     {/* Coverage */}
                                     <div>

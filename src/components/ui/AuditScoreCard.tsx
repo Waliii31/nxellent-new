@@ -1,4 +1,4 @@
-import { ArrowRight, Shield, AlertCircle, CheckCircle2, Clock, Scan } from "lucide-react";
+import { ArrowRight, Shield, AlertCircle, CheckCircle2, Clock, Scan, Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { LatestScanEmbedDto, ScoringDetailsDto } from "../../types/project";
@@ -19,6 +19,8 @@ type AuditScoreCardProps = {
   highIssues?: number;
   mediumIssues?: number;
   lowIssues?: number;
+  status?: string;
+  projectCreatedAt?: string;
 };
 
 const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
@@ -34,6 +36,8 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   highIssues: flatHighIssues,
   mediumIssues: flatMediumIssues,
   lowIssues: flatLowIssues,
+  status: projectStatus,
+  projectCreatedAt,
 }) => {
   const navigate = useNavigate();
 
@@ -49,14 +53,17 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   const primaryScan = currentContractScan || currentAppScan;
   
   // Handle various potential structures for the status from the backend
-  const rawStatus = primaryScan?.scanStatus?.status || (primaryScan as any)?.status || "";
+  const rawStatus = projectStatus || primaryScan?.scanStatus?.status || (primaryScan as any)?.status || (primaryScan as any)?.state || "";
   const normalizedStatus = typeof rawStatus === "string" ? rawStatus.toLowerCase() : "";
 
   // Note: we check 'pending' or 'running' on the *current* (potentially updated) scan
-  const isScanPending = ["pending", "running", "processing", "in_progress", "scanning", "started"].includes(normalizedStatus);
+  const isRecent = (Date.now() - new Date(projectCreatedAt || 0).getTime()) < 5 * 60 * 1000;
+  const hasNoScansAtAll = !primaryScan && !scoringDetails;
+  
+  const isScanPending = ["pending", "running", "processing", "in_progress", "scanning", "started", "queued", "evaluating"].includes(normalizedStatus) || (isRecent && hasNoScansAtAll);
   const isScanFailed = ["failed", "error", "cancelled", "timeout"].includes(normalizedStatus);
 
-  const hasRealData = !!(currentContractScan || currentAppScan || scoringDetails);
+  const hasRealData = !!(primaryScan || scoringDetails || flatTotalIssues || flatCriticalIssues);
   const hasCompletedScan = hasRealData && !isScanPending && !isScanFailed;
 
   // Helper to get issue counts from scoringDetails if available
@@ -100,32 +107,59 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   const scoringCounts = getScoringDetailsCounts();
 
   const overallScore = hasCompletedScan
-    ? (Number(scoringDetails?.overall) || Number(primaryScan?.scores?.overall) || 0)
+    ? (Number(scoringDetails?.overall) || 
+       Number(primaryScan?.scores?.overall) || 
+       Number((primaryScan as any)?.overallScore) ||
+       Number((primaryScan as any)?.overall_score) ||
+       Number((primaryScan as any)?.score) ||
+       0)
     : 0;
 
   // We rely on either the flat API props, primary scan blocks, or our manual aggregation
+  // Using || instead of ?? to ensure we fall through if the preferred value is 0 or missing
   const criticalIssues = hasCompletedScan
-    ? (flatCriticalIssues ?? primaryScan?.issueCounts?.critical ?? scoringCounts?.critical ?? 0)
+    ? (flatCriticalIssues || 
+       primaryScan?.issueCounts?.critical || 
+       (primaryScan as any)?.critical_issues ||
+       (primaryScan as any)?.criticalCount ||
+       scoringCounts?.critical || 0)
     : isScanPending ? "..." : 0;
 
   const highIssues = hasCompletedScan
-    ? (flatHighIssues ?? primaryScan?.issueCounts?.high ?? scoringCounts?.high ?? 0)
+    ? (flatHighIssues || 
+       primaryScan?.issueCounts?.high || 
+       (primaryScan as any)?.high_issues ||
+       scoringCounts?.high || 0)
     : isScanPending ? "..." : 0;
 
   const mediumIssues = hasCompletedScan
-    ? (flatMediumIssues ?? primaryScan?.issueCounts?.medium ?? scoringCounts?.medium ?? 0)
+    ? (flatMediumIssues || 
+       primaryScan?.issueCounts?.medium || 
+       (primaryScan as any)?.medium_issues ||
+       scoringCounts?.medium || 0)
     : isScanPending ? "..." : 0;
 
   const lowIssues = hasCompletedScan
-    ? (flatLowIssues ?? primaryScan?.issueCounts?.low ?? scoringCounts?.low ?? 0)
+    ? (flatLowIssues || 
+       primaryScan?.issueCounts?.low || 
+       (primaryScan as any)?.low_issues ||
+       scoringCounts?.low || 0)
     : isScanPending ? "..." : 0;
 
   const totalIssues = hasCompletedScan
-    ? (flatTotalIssues ?? primaryScan?.issueCounts?.total ?? scoringCounts?.total ?? 0)
+    ? (flatTotalIssues || 
+       primaryScan?.issueCounts?.total || 
+       (primaryScan as any)?.total_issues ||
+       (primaryScan as any)?.vulnerabilityCount ||
+       (primaryScan as any)?.vulnerability_count ||
+       scoringCounts?.total || 0)
     : isScanPending ? "..." : 0;
 
   const coverage = hasCompletedScan
-    ? (Number(scoringDetails?.coverage) || Number(primaryScan?.coverage) || 0)
+    ? (Number(scoringDetails?.coverage) || 
+       Number(primaryScan?.coverage) || 
+       Number((primaryScan as any)?.coverage_percent) ||
+       0)
     : 0;
 
   // Calculate time ago
@@ -143,10 +177,33 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
   }, [primaryScan?.createdAt]);
 
   const scoreTier = useMemo(() => {
-    if (overallScore >= 90) return { name: "Platinum", color: "from-[#E0E7FF] to-[#C7D2FE]" };
-    if (overallScore >= 75) return { name: "Gold", color: "from-[#FDE68A] to-[#FCD34D]" };
-    if (overallScore >= 60) return { name: "Silver", color: "from-[#E5E7EB] to-[#D1D5DB]" };
-    return { name: "Bronze", color: "from-[#FDBA74] to-[#FB923C]" };
+    if (overallScore >= 90)
+      return {
+        name: "Platinum",
+        color: "from-[#E0E7FF] to-[#C7D2FE]",
+        badge: "/platinium-badge.png",
+        textColor: "#1A1B3A"
+      };
+    if (overallScore >= 75)
+      return {
+        name: "Gold",
+        color: "from-[#FDE68A] to-[#FCD34D]",
+        badge: "/gold-badge.png",
+        textColor: "#422800"
+      };
+    if (overallScore >= 60)
+      return {
+        name: "Silver",
+        color: "from-[#E5E7EB] to-[#D1D5DB]",
+        badge: "/silver-badge.png",
+        textColor: "#2D2D2D"
+      };
+    return {
+      name: "Bronze",
+      color: "from-[#FDBA74] to-[#FB923C]",
+      badge: "/silver-badge.png", // Fallback for Bronze
+      textColor: "#431407"
+    };
   }, [overallScore]);
 
   const handleViewDetails = () => {
@@ -202,20 +259,19 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
         }}
         onClick={handleViewDetails}
       >
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="w-20 h-20 rounded-full bg-[#FD7EFF]/10 border-2 border-[#FD7EFF]/30 flex items-center justify-center mb-4 relative">
-            <Scan className="w-10 h-10 text-[#FFC2C8] animate-pulse" />
-            {/* Animated pulse ring */}
-            <div className="absolute inset-0 rounded-full border-2 border-[#FD7EFF] animate-ping opacity-75" />
+        <div className="flex flex-col items-center justify-center py-10">
+          <div className="w-16 h-16 rounded-full bg-[#FD7EFF]/10 border border-[#FD7EFF]/40 flex items-center justify-center mb-4 relative">
+             <div className="absolute inset-0 rounded-full border-t-2 border-[#FD7EFF] animate-spin"></div>
+             <Clock className="w-8 h-8 text-[#FFC2C8]" />
           </div>
-          <h3 className="anybody text-xl font-bold text-white mb-2">{protocolName}</h3>
-          <p className="text-[#FFC2C8] text-sm font-semibold mb-1">Scan in Progress...</p>
-          <p className="text-white/60 text-xs mb-4">
-            {normalizedStatus === "pending" ? "Scan queued and waiting to start" : "Analyzing your code for security issues"}
+          <h3 className="anybody text-xl font-bold text-white mb-2 truncate max-w-full px-4">{protocolName}</h3>
+          <p className="urbanist text-[#FD7EFF] text-sm font-bold mb-1">Processing Scan...</p>
+          <p className="inter text-white/60 text-[10px] sm:text-xs mb-4 text-center max-w-[220px]">
+            Analyzing your repository for vulnerabilities. Results will update automatically.
           </p>
-          <div className="flex items-center gap-2 text-xs text-white/50">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Started {timeAgo}</span>
+          <div className="flex items-center gap-2 text-[#FD7EFF] text-[10px] font-semibold animate-pulse">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            <span>Analyzing vulnerabilities</span>
           </div>
         </div>
       </div>
@@ -307,45 +363,23 @@ const AuditScoreCard: React.FC<AuditScoreCardProps> = ({
 
       {/* Score Section */}
       <div className="flex items-center justify-between mb-6 gap-4">
-        {/* Score Circle */}
-        <div className="relative shrink-0">
-          <svg className="w-28 h-28 sm:w-32 sm:h-32 transform -rotate-90">
-            {/* Background circle */}
-            <circle
-              cx="50%"
-              cy="50%"
-              r="45%"
-              stroke="rgba(255, 255, 255, 0.1)"
-              strokeWidth="8"
-              fill="none"
-            />
-            {/* Progress circle */}
-            <circle
-              cx="50%"
-              cy="50%"
-              r="45%"
-              stroke="url(#scoreGradient)"
-              strokeWidth="8"
-              fill="none"
-              strokeDasharray={`${(overallScore / 100) * 282} 282`}
-              strokeLinecap="round"
-              className="transition-all duration-1000"
-            />
-            <defs>
-              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#FD7EFF" />
-                <stop offset="100%" stopColor="#A855F7" />
-              </linearGradient>
-            </defs>
-          </svg>
-
-          {/* Score Text */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="anybody text-3xl font-bold text-white">
+        {/* Score Badge */}
+        <div className="relative shrink-0 w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center">
+          <img 
+            src={scoreTier.badge} 
+            alt={scoreTier.name} 
+            className="absolute inset-0 w-full h-full object-contain"
+          />
+          <div className="relative z-10 flex flex-col items-center justify-center text-center mt-1 sm:mt-2">
+            <span 
+              className="urbanist text-3xl sm:text-4xl font-bold leading-none text-white drop-shadow-sm"
+            >
               {overallScore}
             </span>
-            <span className={`text-xs font-semibold bg-linear-to-r ${scoreTier.color} bg-clip-text text-transparent`}>
-              {scoreTier.name}
+            <span 
+              className="font-medium text-[12px] sm:text-sm text-white/90 drop-shadow-sm mt-1 capitalize"
+            >
+              {scoreTier.name.toLowerCase()}
             </span>
           </div>
         </div>

@@ -12,8 +12,37 @@ import { useNavigate } from "react-router-dom";
 import Loader from "../components/ui/Loader";
 
 export default function MyProjects(): React.ReactElement {
-  const { data: projects, isLoading, isError } = useMyProjects();
+  const { data: projects, isLoading, isError, refetch } = useMyProjects();
   const navigate = useNavigate();
+
+  // Polling logic: if any project is currently scanning OR is brand new (last 5 mins) with no scans, refetch
+  const isAnyProjectScanning = useMemo(() => {
+    if (!projects) return false;
+    const now = Date.now();
+    return projects.some((p: any) => {
+      const pStatus = (p.status || p.state || "").toLowerCase();
+      const contractStatus = (p.latestContractScan?.scanStatus?.status || p.latestContractScan?.status || "").toLowerCase();
+      const appStatus = (p.latestApplicationScan?.scanStatus?.status || p.latestApplicationScan?.status || "").toLowerCase();
+      
+      const isScanning = [pStatus, contractStatus, appStatus].some(s => 
+        ["pending", "running", "processing", "queued", "started", "evaluating", "in_progress", "scanning"].includes(s)
+      );
+
+      // If project is brand new (created in last 5 mins) and has no scan results, keep polling
+      const isBrandNew = (now - new Date(p.createdAt).getTime()) < 5 * 60 * 1000;
+      const hasNoScans = !p.latestContractScan && !p.latestApplicationScan;
+
+      return isScanning || (isBrandNew && hasNoScans);
+    });
+  }, [projects]);
+
+  React.useEffect(() => {
+    if (!isAnyProjectScanning) return;
+    const interval = setInterval(() => {
+      refetch();
+    }, 4000); // Slightly more frequent polling
+    return () => clearInterval(interval);
+  }, [isAnyProjectScanning, refetch]);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -21,37 +50,44 @@ export default function MyProjects(): React.ReactElement {
   const filteredProjects = useMemo(() => {
     if (!projects) return [];
 
-    return projects.filter((p) => {
-      const matchesSearch = p.name
-        .toLowerCase()
-        .includes(search.trim().toLowerCase());
+    return projects
+      .filter((p) => {
+        const matchesSearch = p.name
+          .toLowerCase()
+          .includes(search.trim().toLowerCase());
 
-      const matchesType = (() => {
-        if (typeFilter === "All") return true;
+        const matchesType = (() => {
+          if (typeFilter === "All") return true;
 
-        const filterLower = typeFilter.toLowerCase();
+          const filterLower = typeFilter.toLowerCase();
 
-        // Check filtering by checking explicit type usually stored in DB
-        // 'contract' might be 'smart contract', 'application' might be 'app'
-        if (filterLower === 'contract') {
-          return (p.type && p.type.toLowerCase().includes('contract')) ||
-            !!p.latestContractScan;
-        }
+          // Check filtering by checking explicit type usually stored in DB
+          // 'contract' might be 'smart contract', 'application' might be 'app'
+          if (filterLower === 'contract') {
+            return (p.type && p.type.toLowerCase().includes('contract')) ||
+              !!p.latestContractScan;
+          }
 
-        if (filterLower === 'application') {
-          return (p.type && (p.type.toLowerCase().includes('application') || p.type.toLowerCase().includes('app'))) ||
-            !!p.latestApplicationScan;
-        }
+          if (filterLower === 'application') {
+            return (p.type && (p.type.toLowerCase().includes('application') || p.type.toLowerCase().includes('app'))) ||
+              !!p.latestApplicationScan;
+          }
 
-        return p.type && p.type.toLowerCase().includes(filterLower);
-      })();
+          return p.type && p.type.toLowerCase().includes(filterLower);
+        })();
 
-      const matchesStatus =
-        statusFilter === "All" ||
-        (statusFilter === "Active" ? p.isActive : !p.isActive);
+        const matchesStatus =
+          statusFilter === "All" ||
+          (statusFilter === "Active" ? p.isActive : !p.isActive);
 
-      return matchesSearch && matchesType && matchesStatus;
-    });
+        return matchesSearch && matchesType && matchesStatus;
+      })
+      .sort((a, b) => {
+        // Sort by createdAt desc (newest first)
+        const dateA = new Date(a.createdAt || a.updatedAt || 0).getTime();
+        const dateB = new Date(b.createdAt || b.updatedAt || 0).getTime();
+        return dateB - dateA;
+      });
   }, [projects, search, statusFilter, typeFilter]);
 
   const cardsCount = filteredProjects.length || (isLoading ? 3 : 0);
@@ -141,20 +177,34 @@ export default function MyProjects(): React.ReactElement {
 
             {!isLoading &&
               !isError &&
-              filteredProjects.map((project) => (
+              filteredProjects.map((project: any) => (
                 <AuditScoreCard
-                  key={project.id || Math.random().toString()}
-                  projectId={project.id}
+                  key={project.id || project._id || Math.random().toString()}
+                  projectId={project.id || project._id}
                   protocolName={project.name}
                   visibility={project.visibility}
                   latestContractScan={project.latestContractScan}
                   latestApplicationScan={project.latestApplicationScan}
+                  status={project.status || project.state}
+                  projectCreatedAt={project.createdAt}
                   scoringDetails={project.scoringDetails}
-                  totalIssues={project.totalIssues != null ? Number(project.totalIssues) : undefined}
-                  criticalIssues={project.criticalIssues != null ? Number(project.criticalIssues) : undefined}
-                  highIssues={project.highIssues != null ? Number(project.highIssues) : undefined}
-                  mediumIssues={project.mediumIssues != null ? Number(project.mediumIssues) : undefined}
-                  lowIssues={project.lowIssues != null ? Number(project.lowIssues) : undefined}
+                  totalIssues={
+                    project.totalIssues || 
+                    project.total_issues || 
+                    project.vulnerabilityCount || 
+                    project.vulnerability_count || 
+                    undefined
+                  }
+                  criticalIssues={
+                    project.criticalIssues || 
+                    project.critical_issues || 
+                    project.criticalVulnerabilities || 
+                    project.critical_vulnerabilities || 
+                    undefined
+                  }
+                  highIssues={project.highIssues || project.high_issues || undefined}
+                  mediumIssues={project.mediumIssues || project.medium_issues || undefined}
+                  lowIssues={project.lowIssues || project.low_issues || undefined}
                 />
               ))}
           </div>

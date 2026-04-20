@@ -46,6 +46,7 @@ export const useInitiateScan = () => {
       queryClient.invalidateQueries({ queryKey: ["contract-scans-project-latest"] });
       queryClient.invalidateQueries({ queryKey: ["application-scans-project-latest"] });
       queryClient.invalidateQueries({ queryKey: ["projects"] });
+      queryClient.invalidateQueries({ queryKey: ["my-projects"] });
     },
   });
 };

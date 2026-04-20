@@ -101,36 +101,79 @@ const SmartContracts: React.FC = () => {
     if (!safeProjects) return [];
 
     return safeProjects
-      .map((p: ProjectResponseDto) => {
-        // Extract score from scoringDetails or currentScores
+      .map((p: ProjectResponseDto | any) => {
+        // Aggressively check every possible field name for the score (both camelCase and snake_case)
         const score = Number(p.scoringDetails?.overall) ||
+          Number(p.overallScore) ||
+          Number(p.overall_score) ||
+          Number(p.latestContractScan?.scores?.overall) ||
+          Number(p.latestApplicationScan?.scores?.overall) ||
+          Number(p.contractScore) ||
+          Number(p.applicationScore) ||
+          Number(p.contract_score) ||
+          Number(p.application_score) ||
           Number(p.currentScores?.overall?.overall) ||
-          Number(p.currentScores?.contract?.overall) ||
-          Number(p.currentScores?.application?.overall) ||
+          Number(p.currentScores?.overall?.score) ||
+          Number(p.score) ||
           0;
 
-        // Determine shield rank from scoringDetails
-        const shieldRank = p.scoringDetails?.shieldRank || "";
+        // Determine shield rank from scoringDetails or scans or snake_case
+        const shieldRank = p.scoringDetails?.shieldRank || 
+          p.shield_rank ||
+          p.latestContractScan?.shieldRank || 
+          p.latestApplicationScan?.shieldRank || 
+          p.shieldRank || "";
 
-        // Use updatedAt or createdAt for last updated
-        const lastUpdated = p.updatedAt || p.createdAt;
+        // Use various sources for the last scan date, including scoringDetails
+        const lastUpdated = p.lastUpdated || // NEW SOURCE FROM API RESPONSE
+          p.scoringDetails?.calculatedAt ||
+          p.scoringDetails?.calculated_at ||
+          p.lastScanAt || p.lastScan || p.last_scan_at || p.last_scan ||
+          p.scannedAt || p.scanned_at ||
+          p.updatedAt || p.updated_at ||
+          p.createdAt || p.created_at ||
+          p.latestContractScan?.updatedAt || p.latestApplicationScan?.updatedAt ||
+          p.latestContractScan?.createdAt || p.latestApplicationScan?.createdAt ||
+          p.latestContractScan?.scannedAt || p.latestApplicationScan?.scannedAt;
 
-        // Contract/Application scores from scoringDetails tracks
-        const contractScore = Number(p.scoringDetails?.contractTrack?.subscore) || 0;
-        const applicationScore = Number(p.scoringDetails?.applicationTrack?.subscore) || 0;
+        // Contract/Application scores from scoringDetails tracks or scans or direct fields
+        const contractScore = Number(p.scoringDetails?.contractTrack?.subscore) ||
+          Number(p.latestContractScan?.scores?.overall) || 
+          Number(p.contractScore) ||
+          Number(p.contract_score) || 0;
 
-        // Coverage from scoringDetails
-        const coverage = Number(p.scoringDetails?.coverage) || 0;
+        const applicationScore = Number(p.scoringDetails?.applicationTrack?.subscore) ||
+          Number(p.latestApplicationScan?.scores?.overall) || 
+          Number(p.applicationScore) ||
+          Number(p.application_score) || 0;
 
-        // Issue counts from latestContractScan or latestApplicationScan
+        // Coverage from scoringDetails or direct from scans or flat fields
+        const coverage = Number(p.scoringDetails?.coverage) ||
+          Number(p.coverage) ||
+          Number(p.latestContractScan?.coverage) ||
+          Number(p.latestApplicationScan?.coverage) || 
+          0;
+
+        // Issue counts from latestContractScan or latestApplicationScan or flat fields (camelCase and snake_case)
         const contractIssues = p.latestContractScan?.issueCounts;
         const appIssues = p.latestApplicationScan?.issueCounts;
-        const totalIssues = (contractIssues?.total || 0) + (appIssues?.total || 0);
-        const criticalIssues = (contractIssues?.critical || 0) + (appIssues?.critical || 0);
+        
+        const totalIssues = Number(p.totalIssues) || 
+          Number(p.total_issues) ||
+          Number(p.vulnerabilityCount) ||
+          Number(p.vulnerability_count) ||
+          ((contractIssues?.total || 0) + (appIssues?.total || 0)) ||
+          0;
 
-        // Has contract/application based on scan presence
-        const hasContract = !!p.latestContractScan || !!p.scoringDetails?.contractTrack;
-        const hasApplication = !!p.latestApplicationScan || !!p.scoringDetails?.applicationTrack;
+        const criticalIssues = Number(p.criticalIssues) || 
+          Number(p.critical_issues) ||
+          Number(p.criticalVulnerabilities) ||
+          ((contractIssues?.critical || 0) + (appIssues?.critical || 0)) ||
+          0;
+
+        // Has contract/application based on scan presence or type or existing scores
+        const hasContract = !!(p.hasContract || p.latestContractScan || p.scoringDetails?.contractTrack || (p.type && String(p.type).toLowerCase().includes('contract')) || p.contractScore);
+        const hasApplication = !!(p.hasApplication || p.latestApplicationScan || p.scoringDetails?.applicationTrack || (p.type && String(p.type).toLowerCase().includes('app')) || p.applicationScore);
 
         return {
           id: p._id || p.id,
@@ -166,11 +209,19 @@ const SmartContracts: React.FC = () => {
 
   const filteredProjects = useMemo(() => {
     let list = allRows;
+    
+    // Filtering based on tab (category)
+    if (category === "Defi") {
+      list = list.filter((p) => p.hasContract);
+    } else if (category === "App") {
+      list = list.filter((p) => p.hasApplication);
+    }
+    
     if (chain !== "All Chains") list = list.filter((p) => p.chain === chain);
     if (region !== "Global") list = list.filter((p) => p.region === region);
     if (visibility !== "All") list = list.filter((p) => p.visibility === visibility);
     return list;
-  }, [allRows, chain, region, visibility]);
+  }, [allRows, category, chain, region, visibility]);
 
   const paginatedProjects = useMemo(() => {
     // Let backend pagination handle it, or slice locally if backend returned flat list

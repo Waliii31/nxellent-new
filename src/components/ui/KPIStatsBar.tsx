@@ -21,12 +21,20 @@ export default function KPIStatsBar(): React.ReactElement {
       new Date(p.createdAt) >= oneWeekAgo
     ).length;
 
-    // Filter projects that have at least one scan to calculate scores
-    const projectsWithScans = projects.filter(p =>
-      p.latestContractScan || p.latestApplicationScan
-    );
+    const projectScores = projects.map(p => {
+      const score = Number(p.scoringDetails?.overall) ||
+        Number(p.overallScore) ||
+        Number((p as any).overall_score) ||
+        Number(p.latestContractScan?.scores?.overall) ||
+        Number(p.latestApplicationScan?.scores?.overall) ||
+        Number((p as any).contractScore) ||
+        Number((p as any).applicationScore) ||
+        Number((p as any).score) ||
+        0;
+      return { name: p.name, score };
+    }).filter(s => s.score > 0);
 
-    if (projectsWithScans.length === 0) {
+    if (projectScores.length === 0) {
       return {
         avgScore: "0.0",
         goldPlatinumPercent: "0%",
@@ -34,15 +42,6 @@ export default function KPIStatsBar(): React.ReactElement {
         newThisWeek: newThisWeek.toString()
       };
     }
-
-    // 2. Calculate scores for each project
-    const projectScores = projectsWithScans.map(p => {
-      const contractScore = p.latestContractScan?.scores?.overall || 0;
-      const appScore = p.latestApplicationScan?.scores?.overall || 0;
-      // Prioritize contract score if available, similar to AuditScoreCard
-      const score = p.latestContractScan ? contractScore : appScore;
-      return { name: p.name, score };
-    });
 
     // 3. Avg Score
     const totalScore = projectScores.reduce((acc, curr) => acc + curr.score, 0);
